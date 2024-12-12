@@ -1,7 +1,7 @@
-import { EmbeddingsInterface } from '@langchain/core/embeddings';
-import { Injectable } from '@rws-framework/server/nest';  
+import { EmbeddingsInterface } from '@rws-framework/ai-tools/node_modules/@langchain/core/embeddings';
+import { Injectable } from '@rws-framework/ai-tools/node_modules/@rws-framework/server/nest';  
 
-import RWSVectorStore, { VectorDocType } from '../models/convo/VectorStore';
+import RWSVectorStore, { VectorDocType } from '@rws-framework/ai-tools/src/models/convo/VectorStore';
 
 @Injectable()
 class VectorStoreService

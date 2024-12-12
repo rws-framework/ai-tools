@@ -1,12 +1,12 @@
 import { Readable } from 'stream';
-import { PromptTemplate } from '@langchain/core/prompts';
-import ConvoLoader, { IChainCallOutput } from '../convo/ConvoLoader';
-import { BedrockChat } from '@langchain/community/chat_models/bedrock/web';
-import { IterableReadableStream } from '@langchain/core/utils/stream';
-import { ChainValues } from '@langchain/core/utils/types';
+import { PromptTemplate } from '@rws-framework/ai-tools/node_modules/@langchain/core/prompts';
+import ConvoLoader, { IChainCallOutput } from '@rws-framework/ai-tools/src/models/convo/ConvoLoader';
+import { BedrockChat } from '@rws-framework/ai-tools/node_modules/@langchain/community/chat_models/bedrock/web';
+import { IterableReadableStream } from '@rws-framework/ai-tools/node_modules/@langchain/core/utils/stream';
+import { ChainValues } from '@rws-framework/ai-tools/node_modules/@langchain/core/utils/types';
 
-import { IContextToken } from '../../types/IContextToken';
-import { BaseChatModel } from '@langchain/core/language_models/chat_models';
+import { IContextToken } from '@rws-framework/ai-tools/src/types/IContextToken';
+import { BaseChatModel } from '@rws-framework/ai-tools/node_modules/@langchain/core/language_models/chat_models';
 
 interface IPromptHyperParameters {
     temperature: number,

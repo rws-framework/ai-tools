@@ -1,9 +1,9 @@
 
-import RWSPrompt, { ILLMChunk, IRWSPromptRequestExecutor, IRWSSinglePromptRequestExecutor, IRWSPromptStreamExecutor, IChainCallOutput, IRWSPromptJSON, ChainStreamType } from './models/prompts/_prompt';
-import RWSConvo, { IConvoDebugXMLData, IEmbeddingsHandler, ISplitterParams } from './models/convo/ConvoLoader';
-import RWSVectorStore from './models/convo/VectorStore';
-import { VectorStoreService } from './services/VectorStoreService';
-import { IContextToken } from './types/IContextToken';
+import RWSPrompt, { ILLMChunk, IRWSPromptRequestExecutor, IRWSSinglePromptRequestExecutor, IRWSPromptStreamExecutor, IChainCallOutput, IRWSPromptJSON, ChainStreamType } from '@rws-framework/ai-tools/src/models/prompts/_prompt';
+import RWSConvo, { IConvoDebugXMLData, IEmbeddingsHandler, ISplitterParams } from '@rws-framework/ai-tools/src/models/convo/ConvoLoader';
+import RWSVectorStore from '@rws-framework/ai-tools/src/models/convo/VectorStore';
+import { VectorStoreService } from '@rws-framework/ai-tools/src/services/VectorStoreService';
+import { IContextToken } from '@rws-framework/ai-tools/src/types/IContextToken';
 
 export {    
     VectorStoreService,

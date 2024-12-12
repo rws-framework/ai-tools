@@ -1,25 +1,25 @@
-import 'reflect-metadata';
+import '@rws-framework/ai-tools/node_modules/reflect-metadata';
 
 import {AppConfigService, ConsoleService, RWSErrorCodes} from '@rws-framework/server';
-import { InjectServices } from '@rws-framework/server/src/helpers/InjectServices';
+import { InjectServices } from '@rws-framework/ai-tools/node_modules/@rws-framework/server/src/helpers/InjectServices';
 
-import RWSPrompt, { IRWSPromptJSON, ILLMChunk } from '../prompts/_prompt';
-import {VectorStoreService} from '../../services/VectorStoreService';
-import RWSVectorStore, { VectorDocType } from './VectorStore';
+import RWSPrompt, { IRWSPromptJSON, ILLMChunk } from '@rws-framework/ai-tools/src/models/prompts/_prompt';
+import {VectorStoreService} from '@rws-framework/ai-tools/src/services/VectorStoreService';
+import RWSVectorStore, { VectorDocType } from '@rws-framework/ai-tools/src/models/convo/VectorStore';
 
-import { Document } from 'langchain/document';
-import { BaseChain, ConversationChain } from 'langchain/chains';
-import { TextLoader } from 'langchain/document_loaders/fs/text';
-import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
-import { BaseChatModel  } from "@langchain/core/language_models/chat_models";
-import { BaseLanguageModelInterface, BaseLanguageModelInput } from '@langchain/core/language_models/base';
-import { PromptTemplate } from '@langchain/core/prompts';
-import { RunnableConfig, Runnable } from '@langchain/core/runnables';
-import { BaseMessage } from '@langchain/core/messages';
-import { ChainValues } from '@langchain/core/utils/types';
+import { Document } from '@rws-framework/ai-tools/node_modules/langchain/document';
+import { BaseChain, ConversationChain } from '@rws-framework/ai-tools/node_modules/langchain/chains';
+import { TextLoader } from '@rws-framework/ai-tools/node_modules/langchain/document_loaders/fs/text';
+import { RecursiveCharacterTextSplitter } from '@rws-framework/ai-tools/node_modules/langchain/text_splitter';
+import { BaseChatModel  } from "@rws-framework/ai-tools/node_modules/@langchain/core/language_models/chat_models";
+import { BaseLanguageModelInterface, BaseLanguageModelInput } from '@rws-framework/ai-tools/node_modules/@langchain/core/language_models/base';
+import { PromptTemplate } from '@rws-framework/ai-tools/node_modules/@langchain/core/prompts';
+import { RunnableConfig, Runnable } from '@rws-framework/ai-tools/node_modules/@langchain/core/runnables';
+import { BaseMessage } from '@rws-framework/ai-tools/node_modules/@langchain/core/messages';
+import { ChainValues } from '@rws-framework/ai-tools/node_modules/@langchain/core/utils/types';
 
-import { v4 as uuid } from 'uuid';
-import xml2js from 'xml2js';
+import { v4 as uuid } from '@rws-framework/ai-tools/node_modules/@types/uuid';
+import xml2js from '@rws-framework/ai-tools/node_modules/@types/xml2js';
 import fs from 'fs';
 import path from 'path';
 

@@ -1,6 +1,6 @@
-import { FaissStore } from '@langchain/community/vectorstores/faiss';
-import { EmbeddingsInterface } from '@langchain/core/embeddings';
-import { Document } from '@langchain/core/documents';
+import { FaissStore } from '@rws-framework/ai-tools/node_modules/@langchain/community/vectorstores/faiss';
+import { EmbeddingsInterface } from '@rws-framework/ai-tools/node_modules/@langchain/core/embeddings';
+import { Document } from '@rws-framework/ai-tools/node_modules/@langchain/core/documents';
 
 type VectorDocType = Document<Record<string, any>>[];
 
