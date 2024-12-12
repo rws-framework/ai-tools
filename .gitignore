@@ -1,0 +1,11 @@
+node_modules/
+exec/dist/
+exec/build/
+exec/vendors/
+exec/node_modules
+
+!lambda-functions/efs_loader/node_modules
+
+# amplify
+.amplify
+amplifyconfiguration*

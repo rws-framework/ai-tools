@@ -1,0 +1,1147 @@
+the following statistics were collected in ts check
++-------------------------------------+-------------------+
+|                      statistic name | value             |
++-------------------------------------+-------------------+
+|                    scanning_runtime | 00:00:00 + 7 ms   |
+|                       scanned_files | 65                |
+|                       skipped_files | 0                 |
+|                        parsing_hits | 323               |
+|                      parsing_misses | 7                 |
+|              extracted_file_results | 65                |
+|       file_results_creation_runtime | 00:00:00 + 225 ms |
+|    number-of-methods-metric-runtime | 00:00:00 + 1 ms   |
+| source-lines-of-code-metric-runtime | 00:00:00 + 3 ms   |
+|            t-f-i-d-f-metric-runtime | 00:00:00 + 91 ms  |
+|           fan-in-out-metric-runtime | 00:00:00 + 1 ms   |
+|   louvain-modularity-metric-runtime | 00:00:00 + 37 ms  |
+|                       total_runtime | 00:00:00 + 369 ms |
++-------------------------------------+-------------------+
+
+the following overall metrics were collected in ts check
++----------------------------------------------+------------------------------+
+|                                  metric name | value                        |
++----------------------------------------------+------------------------------+
+|                avg-number-of-methods-in-file | 0.18                         |
+|                             avg-sloc-in-file | 79.02                        |
+|                          total-sloc-in-files | 5136                         |
+|                  avg-fan-in-dependency-graph | 2.04                         |
+|                 avg-fan-out-dependency-graph | 2.04                         |
+|                  max-fan-in-dependency-graph | 19                           |
+|             max-fan-in-name-dependency-graph | src/services/_service.ts     |
+|                 max-fan-out-dependency-graph | 35                           |
+|            max-fan-out-name-dependency-graph | src/index.ts                 |
+|         louvain-communities-dependency-graph | 11                           |
+|          louvain-modularity-dependency-graph | 0.57                         |
+| louvain-biggest-communities-dependency-graph | 0.18, 0.14, 0.13, 0.12, 0.11 |
++----------------------------------------------+------------------------------+
+
+the following local metrics were collected in ts check
++----------------------------------------------+--------------------------------------------------------------+
+|                                       result | local metrics                                                |
++----------------------------------------------+--------------------------------------------------------------+
+|                                 src/index.ts | number-of-methods-in-file: 0                                 |
+|                                              | sloc-in-file: 115                                            |
+|                                              | fan-in-dependency-graph: 0                                   |
+|                                              | fan-out-dependency-graph: 35                                 |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 4   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                               src/install.ts | number-of-methods-in-file: 4                                 |
+|                                              | sloc-in-file: 137                                            |
+|                                              | tag_section: 0.44361003431412616                             |
+|                                              | tag_executiondir: 0.3133112428754627                         |
+|                                              | tag_annotationtype: 0.22513590461295793                      |
+|                                              | tag_workspaceroot: 0.22180501715706308                       |
+|                                              | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 9                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 4   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                                  src/init.ts | number-of-methods-in-file: 1                                 |
+|                                              | sloc-in-file: 48                                             |
+|                                              | tag_await: 0.4033912543601604                                |
+|                                              | tag_addtoconfig: 0.2714541346497507                          |
+|                                              | tag_init: 0.2610997889578723                                 |
+|                                              | tag_appconfigservice: 0.2610997889578723                     |
+|                                              | tag_httproutes: 0.22960884349617616                          |
+|                                              | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 8                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 4   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|               src/controllers/_controller.ts | number-of-methods-in-file: 0                                 |
+|                                              | sloc-in-file: 48                                             |
+|                                              | tag_methodname: 0.5246805813267461                           |
+|                                              | tag_irequestparams: 0.47736838053050834                      |
+|                                              | tag_haserror: 0.31480834879604763                            |
+|                                              | tag_params: 0.25042604768790444                              |
+|                                              | tag_error: 0.24583470214289477                               |
+|                                              | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 4                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 0   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                    src/interfaces/IDbUser.ts | number-of-methods-in-file: 0                                 |
+|                                              | sloc-in-file: 6                                              |
+|                                              | tag_model: 0.6171796469532844                                |
+|                                              | tag_mongoid: 0.40590595795060264                             |
+|                                              | tag_loaddbuser: 0.40590595795060264                          |
+|                                              | tag_db: 0.3371331271785868                                   |
+|                                              | tag_idbuser: 0.3218385708210364                              |
+|                                              | fan-in-dependency-graph: 3                                   |
+|                                              | fan-out-dependency-graph: 1                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 4   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|              src/interfaces/IContextToken.ts | number-of-methods-in-file: 0                                 |
+|                                              | sloc-in-file: 4                                              |
+|                                              | tag_icontexttoken: 0.9082832558874963                        |
+|                                              | tag_value: 0.3573122108866456                                |
+|                                              | tag_interface: 0.21759942790758097                           |
+|                                              | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 4   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                src/interfaces/ServerTypes.ts | number-of-methods-in-file: 0                                 |
+|                                              | sloc-in-file: 46                                             |
+|                                              | tag_type: 0.42329074820662965                                |
+|                                              | tag_rwsserverpair: 0.3416013788248962                        |
+|                                              | tag_wsroutes: 0.2913391092459728                             |
+|                                              | tag_serverstarter: 0.275579803700844                         |
+|                                              | tag_idbuser: 0.2185043319344796                              |
+|                                              | fan-in-dependency-graph: 0                                   |
+|                                              | fan-out-dependency-graph: 7                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 0   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                  src/interfaces/IAuthUser.ts | number-of-methods-in-file: 0                                 |
+|                                              | sloc-in-file: 4                                              |
+|                                              | tag_mongoid: 0.6992348831102876                              |
+|                                              | tag_iauthuser: 0.6119253282972987                            |
+|                                              | tag_interface: 0.31147487110509336                           |
+|                                              | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 4   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                 src/interfaces/ITheSocket.ts | number-of-methods-in-file: 0                                 |
+|                                              | sloc-in-file: 5                                              |
+|                                              | tag_socket: 0.7579728343639596                               |
+|                                              | tag_routename: 0.3041980201390485                            |
+|                                              | tag_middlewareimplementation: 0.3041980201390485             |
+|                                              | tag_handleconnection: 0.3041980201390485                     |
+|                                              | tag_ithesocket: 0.25265761145465315                          |
+|                                              | tag_next: 0.2411954151706604                                 |
+|                                              | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 1                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 0   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                 src/interfaces/IAppConfig.ts | number-of-methods-in-file: 0                                 |
+|                                              | sloc-in-file: 36                                             |
+|                                              | tag_rwscontroller: 0.4370522088157032                        |
+|                                              | tag_rwscommand: 0.4370522088157032                           |
+|                                              | tag_rwshttproutingentry: 0.3630022546165191                  |
+|                                              | tag_wsroutes: 0.34653410600230944                            |
+|                                              | tag_features: 0.24018432760117248                            |
+|                                              | tag_commands: 0.2185261044078516                             |
+|                                              | tag_ssl: 0.20315935050158043                                 |
+|                                              | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 3                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 0   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                        src/commands/index.ts | number-of-methods-in-file: 0                                 |
+|                                              | sloc-in-file: 14                                             |
+|                                              | tag_reloaddbschemacommand: 0.41223344705451803               |
+|                                              | tag_lambdacommand: 0.41223344705451803                       |
+|                                              | tag_initcommand: 0.41223344705451803                         |
+|                                              | tag_helpcommand: 0.41223344705451803                         |
+|                                              | tag_clearcommand: 0.41223344705451803                        |
+|                                              | tag_cmdlistcommand: 0.3832451943696226                       |
+|                                              | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 6                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 2   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|               src/commands/CMDListCommand.ts | number-of-methods-in-file: 0                                 |
+|                                              | sloc-in-file: 27                                             |
+|                                              | tag_description: 0.43376241810807337                         |
+|                                              | tag_color: 0.37735990585696944                               |
+|                                              | tag_command: 0.34127813676867075                             |
+|                                              | tag_cmd: 0.3110478260329925                                  |
+|                                              | tag_icmdparams: 0.2275187578457805                           |
+|                                              | tag_executiondir: 0.21950804670828558                        |
+|                                              | tag_rwslog: 0.2122614770222114                               |
+|                                              | fan-in-dependency-graph: 2                                   |
+|                                              | fan-out-dependency-graph: 6                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 2   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|        src/commands/ReloadDBSchemaCommand.ts | number-of-methods-in-file: 0                                 |
+|                                              | sloc-in-file: 32                                             |
+|                                              | tag_endprismafilepath: 0.31367763701489026                   |
+|                                              | tag_cfgdata: 0.29161982810016146                             |
+|                                              | tag_color: 0.28541277337400595                               |
+|                                              | tag_rws: 0.27101758704774065                                 |
+|                                              | tag_setupprisma: 0.24871170382691898                         |
+|                                              | tag_packagerootdir: 0.22944235697714718                      |
+|                                              | tag_icmdparams: 0.22944235697714718                          |
+|                                              | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 6                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 2   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                src/commands/LambdaCommand.ts | number-of-methods-in-file: 2                                 |
+|                                              | sloc-in-file: 271                                            |
+|                                              | tag_lambdadirname: 0.5981679822640116                        |
+|                                              | tag_await: 0.28310792754325914                               |
+|                                              | tag_lambda: 0.25978664627991943                              |
+|                                              | tag_lambdaarg: 0.22431299334900434                           |
+|                                              | tag_lambdacmd: 0.2054539648162705                            |
+|                                              | tag_subnetid: 0.20183316944739454                            |
+|                                              | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 10                                 |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 2   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                 src/commands/ClearCommand.ts | number-of-methods-in-file: 0                                 |
+|                                              | sloc-in-file: 29                                             |
+|                                              | tag_rmdir: 0.36371822003072457                               |
+|                                              | tag_path: 0.26027656779822067                                |
+|                                              | tag_packagerootdir: 0.24205482992947558                      |
+|                                              | tag_modulecfgdir: 0.24205482992947558                        |
+|                                              | tag_icmdparams: 0.24205482992947558                          |
+|                                              | tag_command: 0.24205482992947558                             |
+|                                              | tag_executiondir: 0.23353231802601826                        |
+|                                              | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 4                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 2   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                  src/commands/HelpCommand.ts | number-of-methods-in-file: 0                                 |
+|                                              | sloc-in-file: 24                                             |
+|                                              | tag_icmdparams: 0.3033548630374356                           |
+|                                              | tag_command: 0.3033548630374356                              |
+|                                              | tag_executiondir: 0.292674037408129                          |
+|                                              | tag_rwslog: 0.28301205535695967                              |
+|                                              | tag_color: 0.2515703840002825                                |
+|                                              | tag_help: 0.22791466473481942                                |
+|                                              | tag_helpcommand: 0.2073628380308962                          |
+|                                              | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 7                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 2   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                     src/commands/_command.ts | number-of-methods-in-file: 0                                 |
+|                                              | sloc-in-file: 86                                             |
+|                                              | tag_cmdstringarr: 0.3070329135888386                         |
+|                                              | tag_cmddirfile: 0.3070329135888386                           |
+|                                              | tag_match: 0.2793467300787943                                |
+|                                              | tag_classname: 0.24446626397110324                           |
+|                                              | tag_subcmd: 0.23027468519162897                              |
+|                                              | tag_icmdparamsreturn: 0.23027468519162897                    |
+|                                              | tag_finalcmddir: 0.23027468519162897                         |
+|                                              | fan-in-dependency-graph: 7                                   |
+|                                              | fan-out-dependency-graph: 4                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 2   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                  src/commands/InitCommand.ts | number-of-methods-in-file: 0                                 |
+|                                              | sloc-in-file: 41                                             |
+|                                              | tag_rws: 0.4572496456682792                                  |
+|                                              | tag_files: 0.2767550024821798                                |
+|                                              | tag_cfgdata: 0.2767550024821798                              |
+|                                              | tag_color: 0.24076830385084233                               |
+|                                              | tag_config: 0.22631751287709007                              |
+|                                              | tag_configpath: 0.21812832805817972                          |
+|                                              | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 6                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 2   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                  src/services/AuthService.ts | number-of-methods-in-file: 0                                 |
+|                                              | sloc-in-file: 93                                             |
+|                                              | tag_iuser: 0.47565481643558727                               |
+|                                              | tag_socketid: 0.44256466268485917                            |
+|                                              | tag_clientid: 0.3805238531484698                             |
+|                                              | tag_userclass: 0.28539288986135236                           |
+|                                              | fan-in-dependency-graph: 2                                   |
+|                                              | fan-out-dependency-graph: 9                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 0   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                src/services/LambdaService.ts | number-of-methods-in-file: 0                                 |
+|                                              | sloc-in-file: 331                                            |
+|                                              | tag_lambdafunctionname: 0.421567925507268                    |
+|                                              | tag_color: 0.3414578964393315                                |
+|                                              | tag_lambda: 0.2744968406331114                               |
+|                                              | tag_await: 0.2716443063084198                                |
+|                                              | tag_functionname: 0.2658183710112276                         |
+|                                              | tag_functiondirname: 0.24060544331958175                     |
+|                                              | fan-in-dependency-graph: 3                                   |
+|                                              | fan-out-dependency-graph: 14                                 |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 5   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|               src/services/ConsoleService.ts | number-of-methods-in-file: 0                                 |
+|                                              | sloc-in-file: 182                                            |
+|                                              | tag_intro: 0.34590474120616105                               |
+|                                              | tag_parts: 0.31471335514240867                               |
+|                                              | tag_part: 0.31471335514240867                                |
+|                                              | tag_trimmedpart: 0.26903702093812526                         |
+|                                              | tag_lasttype: 0.26903702093812526                            |
+|                                              | tag_getcodecolor: 0.26903702093812526                        |
+|                                              | tag_chalk: 0.26903702093812526                               |
+|                                              | fan-in-dependency-graph: 16                                  |
+|                                              | fan-out-dependency-graph: 4                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 5   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                src/services/RouterService.ts | number-of-methods-in-file: 0                                 |
+|                                              | sloc-in-file: 184                                            |
+|                                              | tag_ihttproute: 0.3630811690782296                           |
+|                                              | tag_controllerinstance: 0.2745560482280226                   |
+|                                              | tag_controllermetadata: 0.2402365421995198                   |
+|                                              | tag_item: 0.21860747949276108                                |
+|                                              | tag_key: 0.20639612305507807                                 |
+|                                              | tag_routeentry: 0.20591703617101698                          |
+|                                              | tag_errmsg: 0.20591703617101698                              |
+|                                              | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 9                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 0   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                     src/services/_service.ts | number-of-methods-in-file: 0                                 |
+|                                              | sloc-in-file: 21                                             |
+|                                              | tag_classname: 0.7692696540656672                            |
+|                                              | tag_instancetype: 0.502302348497905                          |
+|                                              | tag_theservice: 0.26937202947659183                          |
+|                                              | fan-in-dependency-graph: 19                                  |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 5   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                   src/services/VPCService.ts | number-of-methods-in-file: 0                                 |
+|                                              | sloc-in-file: 210                                            |
+|                                              | tag_vpcid: 0.4171277903952387                                |
+|                                              | tag_vpc: 0.3667187902349755                                  |
+|                                              | tag_filters: 0.23574779372248425                             |
+|                                              | tag_endpoint: 0.23574779372248425                            |
+|                                              | tag_subnet: 0.21448962760994386                              |
+|                                              | tag_await: 0.21232137115361646                               |
+|                                              | tag_range: 0.209553594419986                                 |
+|                                              | fan-in-dependency-graph: 3                                   |
+|                                              | fan-out-dependency-graph: 3                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 5   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                    src/services/S3Service.ts | number-of-methods-in-file: 0                                 |
+|                                              | sloc-in-file: 87                                             |
+|                                              | tag_region: 0.5683783644783313                               |
+|                                              | tag_bucket: 0.5277323152582146                               |
+|                                              | tag_bucketname: 0.3383543968580634                           |
+|                                              | tag_params: 0.21148020944839574                              |
+|                                              | fan-in-dependency-graph: 2                                   |
+|                                              | fan-out-dependency-graph: 3                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 5   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                 src/services/UtilsService.ts | number-of-methods-in-file: 0                                 |
+|                                              | sloc-in-file: 75                                             |
+|                                              | tag_modulecfgdir: 0.33354704257454465                        |
+|                                              | tag_filename: 0.3028116034408779                             |
+|                                              | tag_packagedir: 0.2863982432813078                           |
+|                                              | tag_linematch: 0.2863982432813078                            |
+|                                              | tag_argelement: 0.2863982432813078                           |
+|                                              | tag_func: 0.21479868246098086                                |
+|                                              | tag_elapsed: 0.21479868246098086                             |
+|                                              | fan-in-dependency-graph: 6                                   |
+|                                              | fan-out-dependency-graph: 5                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 4   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|             src/services/AppConfigService.ts | number-of-methods-in-file: 0                                 |
+|                                              | sloc-in-file: 74                                             |
+|                                              | tag_iappconfig: 0.571610449914172                            |
+|                                              | tag_cfg: 0.5204017432602037                                  |
+|                                              | tag_appconfigservice: 0.2980757566697132                     |
+|                                              | tag_classname: 0.274162522648167                             |
+|                                              | tag_key: 0.2662435296807722                                  |
+|                                              | tag_cfgstring: 0.2065976305069627                            |
+|                                              | fan-in-dependency-graph: 9                                   |
+|                                              | fan-out-dependency-graph: 2                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 7   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                   src/services/EFSService.ts | number-of-methods-in-file: 0                                 |
+|                                              | sloc-in-file: 221                                            |
+|                                              | tag_filesystemid: 0.5103143729127521                         |
+|                                              | tag_efs: 0.431648216134773                                   |
+|                                              | tag_log: 0.22341086900698748                                 |
+|                                              | tag_await: 0.21543941156623198                               |
+|                                              | fan-in-dependency-graph: 2                                   |
+|                                              | fan-out-dependency-graph: 8                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 5   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|            src/services/CloudWatchService.ts | number-of-methods-in-file: 0                                 |
+|                                              | sloc-in-file: 71                                             |
+|                                              | tag_terminatetimer: 0.33872481395596044                      |
+|                                              | tag_log: 0.31635319844933024                                 |
+|                                              | tag_terminatetimeout: 0.20323488837357626                    |
+|                                              | tag_logstreamname: 0.20323488837357626                       |
+|                                              | tag_logs: 0.20323488837357626                                |
+|                                              | tag_loggroupname: 0.20323488837357626                        |
+|                                              | tag_getlogs: 0.20323488837357626                             |
+|                                              | fan-in-dependency-graph: 0                                   |
+|                                              | fan-out-dependency-graph: 4                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 5   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                   src/services/AWSService.ts | number-of-methods-in-file: 0                                 |
+|                                              | sloc-in-file: 165                                            |
+|                                              | tag_region: 0.706283805315791                                |
+|                                              | tag_appconfigservice: 0.4472255731053444                     |
+|                                              | tag_secretaccesskey: 0.23225393610833286                     |
+|                                              | tag_credentials: 0.23225393610833286                         |
+|                                              | tag_accesskeyid: 0.23225393610833286                         |
+|                                              | fan-in-dependency-graph: 7                                   |
+|                                              | fan-out-dependency-graph: 4                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 5   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                    src/services/DBService.ts | number-of-methods-in-file: 0                                 |
+|                                              | sloc-in-file: 184                                            |
+|                                              | tag_collection: 0.6022048675286068                           |
+|                                              | tag_await: 0.27599775096740675                               |
+|                                              | tag_db: 0.25730701211468426                                  |
+|                                              | fan-in-dependency-graph: 2                                   |
+|                                              | fan-out-dependency-graph: 8                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 7   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|               src/services/ProcessService.ts | number-of-methods-in-file: 0                                 |
+|                                              | sloc-in-file: 48                                             |
+|                                              | tag_startingpid: 0.3235623417889705                          |
+|                                              | tag_resolve: 0.28710807176205855                             |
+|                                              | tag_prompt: 0.27368444836155387                              |
+|                                              | tag_pid: 0.21570822785931365                                 |
+|                                              | tag_interpretertype: 0.21570822785931365                     |
+|                                              | tag_iexeccmdopts: 0.21570822785931365                        |
+|                                              | tag_icommandopts: 0.21570822785931365                        |
+|                                              | fan-in-dependency-graph: 5                                   |
+|                                              | fan-out-dependency-graph: 5                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 4   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|           src/services/VectorStoreService.ts | number-of-methods-in-file: 0                                 |
+|                                              | sloc-in-file: 12                                             |
+|                                              | tag_rwsvectorstore: 0.4804732201929                          |
+|                                              | tag_embeddingsinterface: 0.3660181184677496                  |
+|                                              | tag_vectorstoreservice: 0.3402797273177712                   |
+|                                              | tag_vectordoctype: 0.3402797273177712                        |
+|                                              | tag_rwsservice: 0.3402797273177712                           |
+|                                              | tag_embeddings: 0.3402797273177712                           |
+|                                              | tag_docs: 0.3203154801286                                    |
+|                                              | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 3                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 8   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                   src/services/ZipService.ts | number-of-methods-in-file: 0                                 |
+|                                              | sloc-in-file: 63                                             |
+|                                              | tag_zipwriter: 0.5204274758493074                            |
+|                                              | tag_fullpath: 0.3642992330945152                             |
+|                                              | tag_blob: 0.3642992330945152                                 |
+|                                              | tag_outputpath: 0.2602137379246537                           |
+|                                              | tag_izipparams: 0.2602137379246537                           |
+|                                              | tag_zippath: 0.20718782100860852                             |
+|                                              | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 6                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 5   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                   src/services/MD5Service.ts | number-of-methods-in-file: 0                                 |
+|                                              | sloc-in-file: 76                                             |
+|                                              | tag_modulecfgdir: 0.44781630667995265                        |
+|                                              | tag_cmdfileslist: 0.42056315818460793                        |
+|                                              | tag_filename: 0.35573236153673704                            |
+|                                              | tag_filenames: 0.25233789491076475                           |
+|                                              | fan-in-dependency-graph: 2                                   |
+|                                              | fan-out-dependency-graph: 6                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 2   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|            src/services/APIGatewayService.ts | number-of-methods-in-file: 0                                 |
+|                                              | sloc-in-file: 112                                            |
+|                                              | tag_restapiid: 0.5905534176920499                            |
+|                                              | tag_gatewayname: 0.2995769722276284                          |
+|                                              | tag_await: 0.2832981896895697                                |
+|                                              | tag_resource: 0.26411306059928924                            |
+|                                              | tag_gateway: 0.2111637331171488                              |
+|                                              | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 6                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 5   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                src/services/ServerService.ts | number-of-methods-in-file: 0                                 |
+|                                              | sloc-in-file: 367                                            |
+|                                              | tag_socketid: 0.3912640976171755                             |
+|                                              | tag_reqid: 0.2643259489759275                                |
+|                                              | tag_token: 0.22800055700837096                               |
+|                                              | tag_next: 0.22246306317974682                                |
+|                                              | tag_request: 0.20494786065661574                             |
+|                                              | fan-in-dependency-graph: 2                                   |
+|                                              | fan-out-dependency-graph: 24                                 |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 0   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|             src/services/TraversalService.ts | number-of-methods-in-file: 1                                 |
+|                                              | sloc-in-file: 33                                             |
+|                                              | tag_entrypath: 0.49548584092555165                           |
+|                                              | tag_traversedirectory: 0.37161438069416375                   |
+|                                              | tag_currentpath: 0.37161438069416375                         |
+|                                              | tag_pass: 0.33810467055068383                                |
+|                                              | tag_regexp: 0.24774292046277582                              |
+|                                              | tag_folderpath: 0.24774292046277582                          |
+|                                              | tag_traversalservice: 0.20955276855598026                    |
+|                                              | fan-in-dependency-graph: 2                                   |
+|                                              | fan-out-dependency-graph: 3                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 2   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                           src/tests/index.ts | number-of-methods-in-file: 0                                 |
+|                                              | sloc-in-file: 6                                              |
+|                                              | tag_testhelper: 0.36528301237328686                          |
+|                                              | tag_testaction: 0.36528301237328686                          |
+|                                              | tag_itheuser: 0.36528301237328686                            |
+|                                              | tag_browserhelper: 0.36528301237328686                       |
+|                                              | tag_axioshelper: 0.36528301237328686                         |
+|                                              | tag_testcase: 0.3395963138779651                             |
+|                                              | tag_mocha: 0.3395963138779651                                |
+|                                              | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 5                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 3   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                 src/tests/actions/_action.ts | number-of-methods-in-file: 0                                 |
+|                                              | sloc-in-file: 9                                              |
+|                                              | tag_vars: 0.6986270461751745                                 |
+|                                              | tag_itestvars: 0.5562620042629234                            |
+|                                              | tag_noreturn: 0.23287568205839151                            |
+|                                              | tag_fire: 0.23287568205839151                                |
+|                                              | tag_testaction: 0.21187650384934315                          |
+|                                              | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 1                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 3   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|           src/tests/test_cases/_test_case.ts | number-of-methods-in-file: 0                                 |
+|                                              | sloc-in-file: 10                                             |
+|                                              | tag_itestvars: 0.5277907460742567                            |
+|                                              | tag_not: 0.4115574232668829                                  |
+|                                              | tag_throw: 0.34738341913681825                               |
+|                                              | tag_declare: 0.3314345462234427                              |
+|                                              | tag_testvars: 0.3015479859812444                             |
+|                                              | tag_testcase: 0.2803431340297491                             |
+|                                              | tag_error: 0.25881814526936864                               |
+|                                              | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 1                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 3   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                   src/tests/helpers/index.ts | number-of-methods-in-file: 0                                 |
+|                                              | sloc-in-file: 9                                              |
+|                                              | tag_testhelper: 0.5087030086426308                           |
+|                                              | tag_browserhelper: 0.5087030086426308                        |
+|                                              | tag_axioshelper: 0.5087030086426308                          |
+|                                              | tag_mocha: 0.47293101716191793                               |
+|                                              | fan-in-dependency-graph: 0                                   |
+|                                              | fan-out-dependency-graph: 3                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 3   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|           src/tests/helpers/BrowserHelper.ts | number-of-methods-in-file: 1                                 |
+|                                              | sloc-in-file: 42                                             |
+|                                              | tag_ibrowserparams: 0.476552834999751                        |
+|                                              | tag_browser: 0.43358047386812465                             |
+|                                              | tag_webbrowser: 0.34686437909449974                          |
+|                                              | tag_cookie: 0.2859317009998506                               |
+|                                              | tag_acc: 0.2859317009998506                                  |
+|                                              | tag_app: 0.24185465905752201                                 |
+|                                              | tag_await: 0.23176662172981197                               |
+|                                              | fan-in-dependency-graph: 3                                   |
+|                                              | fan-out-dependency-graph: 1                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 3   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|              src/tests/helpers/TestHelper.ts | number-of-methods-in-file: 0                                 |
+|                                              | sloc-in-file: 175                                            |
+|                                              | tag_testvars: 0.4044391224211058                             |
+|                                              | tag_callbacks: 0.3309047365263592                            |
+|                                              | tag_getconfig: 0.294137543578986                             |
+|                                              | tag_socket: 0.27483939675730057                              |
+|                                              | tag_await: 0.24566973761175095                               |
+|                                              | tag_cfgpath: 0.24246723858763272                             |
+|                                              | tag_logincallback: 0.2020560321563606                        |
+|                                              | fan-in-dependency-graph: 2                                   |
+|                                              | fan-out-dependency-graph: 13                                 |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 3   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|             src/tests/helpers/AxiosHelper.ts | number-of-methods-in-file: 0                                 |
+|                                              | sloc-in-file: 22                                             |
+|                                              | tag_axiosinstance: 0.6453796538460987                        |
+|                                              | tag_createaxiosdefaults: 0.32268982692304937                 |
+|                                              | tag_opts: 0.2569326378962764                                 |
+|                                              | tag_getappconfig: 0.24384841401764595                        |
+|                                              | tag_config: 0.22320304049178594                              |
+|                                              | fan-in-dependency-graph: 2                                   |
+|                                              | fan-out-dependency-graph: 3                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 3   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                          src/errors/index.ts | number-of-methods-in-file: 0                                 |
+|                                              | sloc-in-file: 7                                              |
+|                                              | tag_rwserror: 1.0                                            |
+|                                              | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 4                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 9   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                       src/errors/Error500.ts | number-of-methods-in-file: 0                                 |
+|                                              | sloc-in-file: 11                                             |
+|                                              | tag_resourcepath: 0.6980992040651484                         |
+|                                              | tag_internal: 0.41266249255408255                            |
+|                                              | tag_baseerror: 0.3285708253767067                            |
+|                                              | tag_rwserror: 0.2649579348551983                             |
+|                                              | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 1                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 9   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                         src/errors/_error.ts | number-of-methods-in-file: 0                                 |
+|                                              | sloc-in-file: 40                                             |
+|                                              | tag_baseerror: 0.6595576875102181                            |
+|                                              | tag_code: 0.47111263393587005                                |
+|                                              | tag_protected: 0.40926591954047686                           |
+|                                              | tag_error: 0.2772291838048115                                |
+|                                              | fan-in-dependency-graph: 4                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 9   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                       src/errors/Error404.ts | number-of-methods-in-file: 0                                 |
+|                                              | sloc-in-file: 8                                              |
+|                                              | tag_resourcepath: 0.48468738338732736                        |
+|                                              | tag_baseerror: 0.4562507239139852                            |
+|                                              | tag_rwserror: 0.36791839155482364                            |
+|                                              | tag_not: 0.35577238459438854                                 |
+|                                              | tag_was: 0.26067430685757076                                 |
+|                                              | tag_params: 0.2279149571643147                               |
+|                                              | tag_resource: 0.21650814067798999                            |
+|                                              | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 1                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 9   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                       src/errors/Error403.ts | number-of-methods-in-file: 0                                 |
+|                                              | sloc-in-file: 8                                              |
+|                                              | tag_resourcepath: 0.44921311981821815                        |
+|                                              | tag_baseerror: 0.4228577390984767                            |
+|                                              | tag_rwserror: 0.34099044904737735                            |
+|                                              | tag_not: 0.32973340818549324                                 |
+|                                              | tag_current: 0.26554020493465874                             |
+|                                              | tag_autorized: 0.26554020493465874                           |
+|                                              | tag_was: 0.24159555757688111                                 |
+|                                              | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 1                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 9   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                       src/sockets/_socket.ts | number-of-methods-in-file: 0                                 |
+|                                              | sloc-in-file: 62                                             |
+|                                              | tag_defaulteventsmap: 0.4633860510693896                     |
+|                                              | tag_socket: 0.4001930707041871                               |
+|                                              | tag_method: 0.3501689368661636                               |
+|                                              | tag_input: 0.28652827817412313                               |
+|                                              | tag_baseresponse: 0.2647920291825083                         |
+|                                              | tag_error: 0.25847102639131114                               |
+|                                              | tag_success: 0.24091484733170093                             |
+|                                              | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 4                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 0   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                         src/models/_model.ts | number-of-methods-in-file: 0                                 |
+|                                              | sloc-in-file: 351                                            |
+|                                              | tag_childclass: 0.6258084241686245                           |
+|                                              | tag_key: 0.40627295810956116                                 |
+|                                              | tag_data: 0.27936099256111097                                |
+|                                              | tag_collection: 0.24726567184381462                          |
+|                                              | tag_model: 0.20220249451562533                               |
+|                                              | fan-in-dependency-graph: 2                                   |
+|                                              | fan-out-dependency-graph: 4                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 6   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                src/models/prompts/_prompt.ts | number-of-methods-in-file: 0                                 |
+|                                              | sloc-in-file: 309                                            |
+|                                              | tag_rwsprompt: 0.4553007466623285                            |
+|                                              | tag_event: 0.20620598042910124                               |
+|                                              | tag_chunk: 0.20620598042910124                               |
+|                                              | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 7                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 1   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|              src/models/annotations/index.ts | number-of-methods-in-file: 0                                 |
+|                                              | sloc-in-file: 7                                              |
+|                                              | tag_relation: 0.5131140314343912                             |
+|                                              | tag_inversetimeseries: 0.5131140314343912                    |
+|                                              | tag_inverserelation: 0.5131140314343912                      |
+|                                              | tag_tracktype: 0.45841244773177797                           |
+|                                              | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 4                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 6   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|  src/models/annotations/InverseTimeSeries.ts | number-of-methods-in-file: 1                                 |
+|                                              | sloc-in-file: 16                                             |
+|                                              | tag_hydrationfield: 0.5797129048005008                       |
+|                                              | tag_timeseriesmodel: 0.48149188410030586                     |
+|                                              | tag_inversetimeseriesopts: 0.4778763890195033                |
+|                                              | tag_inversetimeseries: 0.2694737489962381                    |
+|                                              | tag_metaopts: 0.24074594205015293                            |
+|                                              | tag_target: 0.2203632386461407                               |
+|                                              | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 6   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|          src/models/annotations/TrackType.ts | number-of-methods-in-file: 1                                 |
+|                                              | sloc-in-file: 41                                             |
+|                                              | tag_itrackeropts: 0.47202352080447285                        |
+|                                              | tag_type: 0.4328954333024549                                 |
+|                                              | tag_required: 0.39925998863398704                            |
+|                                              | tag_tags: 0.2994449914754903                                 |
+|                                              | tag_imetaopts: 0.2994449914754903                            |
+|                                              | tag_opts: 0.2818765225088004                                 |
+|                                              | fan-in-dependency-graph: 2                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 6   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|           src/models/annotations/Relation.ts | number-of-methods-in-file: 0                                 |
+|                                              | sloc-in-file: 23                                             |
+|                                              | tag_relationfield: 0.462491719738643                         |
+|                                              | tag_relatedto: 0.462491719738643                             |
+|                                              | tag_irelationopts: 0.4100842360403874                        |
+|                                              | tag_required: 0.3468687898039823                             |
+|                                              | tag_relatedtofield: 0.3468687898039823                       |
+|                                              | tag_relation: 0.2312458598693215                             |
+|                                              | tag_metaopts: 0.20659341619288726                            |
+|                                              | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 6   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|    src/models/annotations/InverseRelation.ts | number-of-methods-in-file: 1                                 |
+|                                              | sloc-in-file: 18                                             |
+|                                              | tag_inversionmodel: 0.6043854539267749                       |
+|                                              | tag_inverserelationopts: 0.5358992098010863                  |
+|                                              | tag_inverserelation: 0.30219272696338745                     |
+|                                              | tag_metaopts: 0.2699768456278128                             |
+|                                              | tag_target: 0.247119314059384                                |
+|                                              | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 6   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|         src/models/interfaces/ITimeSeries.ts | number-of-methods-in-file: 0                                 |
+|                                              | sloc-in-file: 6                                              |
+|                                              | tag_timestamp: 0.49693204512934036                           |
+|                                              | tag_itimeseries: 0.49693204512934036                         |
+|                                              | tag_date: 0.46777699007101214                                |
+|                                              | tag_value: 0.39097910603249136                               |
+|                                              | tag_interface: 0.23810221762467979                           |
+|                                              | tag_params: 0.23367277478465132                              |
+|                                              | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 4   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|          src/models/types/TimeSeriesModel.ts | number-of-methods-in-file: 0                                 |
+|                                              | sloc-in-file: 15                                             |
+|                                              | tag_date: 0.5413570259113847                                 |
+|                                              | tag_rwsmodel: 0.41239859312831245                            |
+|                                              | tag_childclass: 0.41239859312831245                          |
+|                                              | tag_timeseriesmodel: 0.3425257122299188                      |
+|                                              | tag_data: 0.23754168488632724                                |
+|                                              | tag_rwstracktype: 0.20619929656415623                        |
+|                                              | fan-in-dependency-graph: 2                                   |
+|                                              | fan-out-dependency-graph: 1                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 4   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|              src/models/convo/ConvoLoader.ts | number-of-methods-in-file: 0                                 |
+|                                              | sloc-in-file: 300                                            |
+|                                              | tag_iconvodebugxmldata: 0.3488907952294291                   |
+|                                              | tag_llmchat: 0.2465161220406292                              |
+|                                              | tag_debugcallback: 0.21912544181389262                       |
+|                                              | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 19                                 |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 1   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|              src/models/convo/VectorStore.ts | number-of-methods-in-file: 0                                 |
+|                                              | sloc-in-file: 26                                             |
+|                                              | tag_vectordoctype: 0.47851122394482953                       |
+|                                              | tag_faissstore: 0.42428848200581176                          |
+|                                              | tag_embeddingsinterface: 0.3860289721809404                  |
+|                                              | tag_embeddings: 0.35888341795862216                          |
+|                                              | tag_docs: 0.3378276902939245                                 |
+|                                              | tag_document: 0.2573526481206269                             |
+|                                              | tag_rwsvectorstore: 0.22521846019594965                      |
+|                                              | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 3                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 8   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                        src/routing/routes.ts | number-of-methods-in-file: 0                                 |
+|                                              | sloc-in-file: 11                                             |
+|                                              | tag_ihttproute: 0.659033360137623                            |
+|                                              | tag_iprefixedhttproutes: 0.5207964352483536                  |
+|                                              | tag_rwshttproutingentry: 0.3295166800688115                  |
+|                                              | tag_noparams: 0.21802823874829055                            |
+|                                              | fan-in-dependency-graph: 0                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 10  |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|             src/routing/annotations/index.ts | number-of-methods-in-file: 0                                 |
+|                                              | sloc-in-file: 4                                              |
+|                                              | tag_route: 1.0                                               |
+|                                              | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 1                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 4   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|             src/routing/annotations/Route.ts | number-of-methods-in-file: 0                                 |
+|                                              | sloc-in-file: 18                                             |
+|                                              | tag_requestmethodtype: 0.5219253281651962                    |
+|                                              | tag_ihttprouteparams: 0.474861577750892                      |
+|                                              | tag_ihttprouteopts: 0.3914439961238972                       |
+|                                              | tag_method: 0.29580417375321905                              |
+|                                              | tag_responsetype: 0.237430788875446                          |
+|                                              | tag_name: 0.21041796744404742                                |
+|                                              | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 4   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                                    socket.io | fan-in-dependency-graph: 4                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 0   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                                           fs | fan-in-dependency-graph: 16                                  |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 2   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                                         path | fan-in-dependency-graph: 17                                  |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 2   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                                      express | fan-in-dependency-graph: 3                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 0   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                         ../services/_service | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 0   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                           ../errors/Error404 | fan-in-dependency-graph: 2                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 0   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                           ../errors/Error500 | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 0   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                             ../models/_model | fan-in-dependency-graph: 3                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 7   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                                         http | fan-in-dependency-graph: 3                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 0   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                                        https | fan-in-dependency-graph: 3                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 3   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                   ../controllers/_controller | fan-in-dependency-graph: 3                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 0   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                    ../services/ServerService | fan-in-dependency-graph: 3                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 0   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                            ../routing/routes | fan-in-dependency-graph: 3                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 0   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                         ../commands/_command | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 0   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                                   ../install | fan-in-dependency-graph: 4                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 2   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                   ../services/ConsoleService | fan-in-dependency-graph: 6                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 2   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                     ../services/UtilsService | fan-in-dependency-graph: 7                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 2   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                       ../services/AWSService | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 2   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                       ../services/EFSService | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 2   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                    ../services/LambdaService | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 2   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                       ../services/VPCService | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 2   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                ../services/CloudWatchService | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 2   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                                  fs/promises | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 2   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                     ../interfaces/IAppConfig | fan-in-dependency-graph: 2                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 7   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                                 jsonwebtoken | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 0   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                      ../interfaces/IAuthUser | fan-in-dependency-graph: 2                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 0   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                                    ../errors | fan-in-dependency-graph: 4                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 6   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                        ../interfaces/IDbUser | fan-in-dependency-graph: 2                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 0   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                                      aws-sdk | fan-in-dependency-graph: 4                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 5   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                                        chalk | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 5   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                                         pino | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 5   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                                  pino-pretty | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 5   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                 ../routing/annotations/Route | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 0   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                              ../errors/index | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 0   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                       @rws-framework/console | fan-in-dependency-graph: 2                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 4   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                                   source-map | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 4   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|               aws-sdk/clients/cloudwatchlogs | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 5   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                               @prisma/client | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 7   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                                      mongodb | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 7   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|             ../models/interfaces/ITimeSeries | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 7   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                                child_process | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 4   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                                     readline | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 4   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                   @langchain/core/embeddings | fan-in-dependency-graph: 2                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 8   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                  ../models/convo/VectorStore | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 8   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                               @zip.js/zip.js | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 5   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                                       crypto | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 2   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                                         cors | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 0   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                     ../interfaces/ITheSocket | fan-in-dependency-graph: 2                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 0   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                                        axios | fan-in-dependency-graph: 2                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 3   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                                  body-parser | fan-in-dependency-graph: 2                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 3   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                             ../errors/_error | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 0   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                                  compression | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 0   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                           express-fileupload | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 0   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                    ../interfaces/ServerTypes | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 0   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                        ../helpers/TestHelper | fan-in-dependency-graph: 2                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 3   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                                    puppeteer | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 3   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|              ../../services/AppConfigService | fan-in-dependency-graph: 3                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 3   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                 ../../services/ServerService | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 3   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                             socket.io-client | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 3   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                                        mocha | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 3   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                                         chai | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 3   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                                    chai-like | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 3   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                                  chai-things | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 3   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                     ../test_cases/_test_case | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 3   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                  ../../services/UtilsService | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 3   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                  socket.io/dist/typed-events | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 0   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                        ../services/DBService | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 6   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                 ../services/AppConfigService | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 6   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                                       stream | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 1   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                      @langchain/core/prompts | fan-in-dependency-graph: 2                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 1   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                         ../convo/ConvoLoader | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 1   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+| @langchain/community/chat_models/bedrock/web | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 1   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                 @langchain/core/utils/stream | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 1   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                  @langchain/core/utils/types | fan-in-dependency-graph: 2                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 1   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|               ../../interfaces/IContextToken | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 1   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                                    ../_model | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 4   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|           langchain/document_loaders/fs/text | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 1   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                      langchain/text_splitter | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 1   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                    @langchain/core/runnables | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 1   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                     @langchain/core/messages | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 1   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|         @langchain/core/language_models/base | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 1   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|            ../../services/VectorStoreService | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 1   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                ../../services/ConsoleService | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 1   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                         ../convo/VectorStore | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 1   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                           langchain/document | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 1   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                                         uuid | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 1   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                             langchain/chains | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 1   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                           ../prompts/_prompt | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 1   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                                 ../../errors | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 1   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                                       xml2js | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 1   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|      @langchain/community/vectorstores/faiss | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 8   |
+| -------------------------------------------- | ------------------------------------------------------------ |
+|                    @langchain/core/documents | fan-in-dependency-graph: 1                                   |
+|                                              | fan-out-dependency-graph: 0                                  |
+|                                              | file_result_dependency_graph_louvain-modularity-in-file: 8   |
++----------------------------------------------+--------------------------------------------------------------+
