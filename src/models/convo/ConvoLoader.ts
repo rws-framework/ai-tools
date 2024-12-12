@@ -17,8 +17,8 @@ import { RunnableConfig, Runnable } from '@langchain/core/runnables';
 import { BaseMessage } from '@langchain/core/messages';
 import { ChainValues } from '@langchain/core/utils/types';
 
-import { v4 as uuid } from '@types/uuid';
-import xml2js from '@types/xml2js';
+import { v4 as uuid } from 'uuid';
+import xml2js from 'xml2js';
 import fs from 'fs';
 import path from 'path';
 
