@@ -1,5 +1,5 @@
 import { EmbeddingsInterface } from '@langchain/core/embeddings';
-import { Injectable } from '../../nest';  
+import { Injectable } from '@rws-framework/server/nest';  
 
 import RWSVectorStore, { VectorDocType } from '../models/convo/VectorStore';
 
