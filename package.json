@@ -13,7 +13,7 @@
     "@nestjs/common": "^10.3.2",
     "@nestjs/core": "^10.3.2",
     "@rws-framework/console": "*",
-    "@rws-framework/server": "^3.4.3-beta",
+    "@rws-framework/server": "^3.4.4-beta",
     "langchain": "^0.2.16",
     "uuid": "^9.0.0",
     "xml2js": "^0.6.2"
