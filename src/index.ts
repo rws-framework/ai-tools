@@ -4,8 +4,10 @@ import RWSConvo, { IConvoDebugXMLData, IEmbeddingsHandler, ISplitterParams } fro
 import RWSVectorStore from './models/convo/VectorStore';
 import { VectorStoreService } from './services/VectorStoreService';
 import { IContextToken } from './types/IContextToken';
+import type { IAiCfg } from './types/IAiCfg';
 
 export {    
+    IAiCfg,
     VectorStoreService,
     RWSVectorStore,
     RWSConvo,

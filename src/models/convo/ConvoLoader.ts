@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 
-import {AppConfigService, ConsoleService, RWSErrorCodes} from '@rws-framework/server';
+import { ConsoleService, RWSConfigService, RWSErrorCodes} from '@rws-framework/server';
 import { InjectServices } from '@rws-framework/server/src/helpers/InjectServices';
 import RWSPrompt, { IRWSPromptJSON, ILLMChunk } from '../../models/prompts/_prompt';
 import {VectorStoreService} from '../../services/VectorStoreService';
@@ -21,6 +21,7 @@ import { v4 as uuid } from 'uuid';
 import xml2js from 'xml2js';
 import fs from 'fs';
 import path from 'path';
+import { IAiCfg } from '../../types/IAiCfg';
 
 
 interface ISplitterParams {
@@ -83,7 +84,7 @@ class ConvoLoader<LLMChat extends BaseChatModel> {
     private thePrompt: RWSPrompt;
 
     vectorStoreService: VectorStoreService;
-    configService: AppConfigService;
+    configService: RWSConfigService<IAiCfg>;
 
     public _baseSplitterParams: ISplitterParams;    
     
