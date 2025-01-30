@@ -6,16 +6,14 @@ import RWSPrompt, { IRWSPromptJSON, ILLMChunk } from '../../models/prompts/_prom
 import {VectorStoreService} from '../../services/VectorStoreService';
 import RWSVectorStore, { VectorDocType } from '../../models/convo/VectorStore';
 
-import { Document } from 'langchain/document';
-import { BaseChain, ConversationChain } from 'langchain/chains';
-import { TextLoader } from 'langchain/document_loaders/fs/text';
-import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
+import { Document } from '@langchain/core/documents';
+import { UnstructuredLoader } from '@langchain/community/document_loaders/fs/unstructured';
+
 import { BaseChatModel  } from "@langchain/core/language_models/chat_models";
 import { BaseLanguageModelInterface, BaseLanguageModelInput } from '@langchain/core/language_models/base';
-import { PromptTemplate } from '@langchain/core/prompts';
-import { RunnableConfig, Runnable } from '@langchain/core/runnables';
+import { Runnable } from '@langchain/core/runnables';
 import { BaseMessage } from '@langchain/core/messages';
-import { ChainValues } from '@langchain/core/utils/types';
+
 
 import { v4 as uuid } from 'uuid';
 import xml2js from 'xml2js';
@@ -69,16 +67,15 @@ type LLMType = BaseLanguageModelInterface | Runnable<BaseLanguageModelInput, str
 
 @InjectServices([VectorStoreService])
 class ConvoLoader<LLMChat extends BaseChatModel> {
-    private loader: TextLoader;
-    private docSplitter: RecursiveCharacterTextSplitter;    
+    private loader: UnstructuredLoader;
+    // private docSplitter: RecursiveCharacterTextSplitter;    
 
     private embeddings: IEmbeddingsHandler<any>;
 
     private docs: Document[] = [];
     private _initiated = false;
     private store: RWSVectorStore;
-    private convo_id: string;    
-    private llmChain: BaseChain;
+    private convo_id: string;        
     private llmChat: LLMChat;
     private chatConstructor: new (config: any) => LLMChat;
     private thePrompt: RWSPrompt;
@@ -125,18 +122,18 @@ class ConvoLoader<LLMChat extends BaseChatModel> {
 
         if(!fs.existsSync(splitDir)){
             console.log(`Split dir ${ConsoleService.color().magentaBright(splitDir)} doesn't exist. Splitting docs...`);
-            this.loader = new TextLoader(filePath);
+            this.loader = new UnstructuredLoader(filePath);
 
-            this.docSplitter = new RecursiveCharacterTextSplitter({
-                chunkSize: params.chunkSize, // The size of the chunk that should be split.
-                chunkOverlap: params.chunkOverlap, // Adding overalap so that if a text is broken inbetween, next document may have part of the previous document 
-                separators: params.separators // In this case we are assuming that /n/n would mean one whole sentence. In case there is no nearing /n/n then "." will be used instead. This can be anything that helps derive a complete sentence .
-            });
+            // this.docSplitter = new RecursiveCharacterTextSplitter({
+            //     chunkSize: params.chunkSize, // The size of the chunk that should be split.
+            //     chunkOverlap: params.chunkOverlap, // Adding overalap so that if a text is broken inbetween, next document may have part of the previous document 
+            //     separators: params.separators // In this case we are assuming that /n/n would mean one whole sentence. In case there is no nearing /n/n then "." will be used instead. This can be anything that helps derive a complete sentence .
+            // });
 
             fs.mkdirSync(splitDir, { recursive: true });
             
             const orgDocs = await this.loader.load();
-            const splitDocs = await this.docSplitter.splitDocuments(orgDocs);
+            const splitDocs: any[] = [];//await this.docSplitter.splitDocuments(orgDocs);
 
             const avgCharCountPre = this.avgDocLength(orgDocs);
             const avgCharCountPost = this.avgDocLength(splitDocs);
@@ -214,39 +211,6 @@ class ConvoLoader<LLMChat extends BaseChatModel> {
         return documents.reduce((sum, doc: Document) => sum + doc.pageContent.length, 0) / documents.length;
     };
 
-    async call(values: ChainValues, cfg: any, debugCallback: (debugData: IConvoDebugXMLData) => Promise<IConvoDebugXMLData> = null): Promise<RWSPrompt>
-    {   
-        const output = await (this.chain()).invoke(values, cfg) as IChainCallOutput;        
-        this.thePrompt.listen(output.text);        
-
-        await this.debugCall(debugCallback);
-
-        return this.thePrompt;
-    }
-
-    async callStream(values: ChainValues, callback: (streamChunk: ILLMChunk) => void, end: () => void = () => {}, cfg: Partial<RunnableConfig> = {}, debugCallback?: (debugData: IConvoDebugXMLData) => Promise<IConvoDebugXMLData>): Promise<RWSPrompt>
-    {
-        const _self = this;               
-
-        await this.chain().invoke(values, { callbacks: [{
-            handleLLMNewToken(token: string) {
-                callback({
-                    content: token,
-                    status: 'rws_streaming'
-                });
-
-                _self.thePrompt.listen(token, true);
-            }
-        }
-        ]});
-
-        end();
-
-        this.debugCall(debugCallback);
-
-        return this.thePrompt;
-    }
-
     async similaritySearch(query: string, splitCount: number): Promise<string>
     {
         console.log('Store is ready. Searching for embedds...');            
@@ -275,34 +239,6 @@ class ConvoLoader<LLMChat extends BaseChatModel> {
         }
     }
 
-    chain(): BaseChain
-    {        
-        if(this.llmChain){
-            return this.llmChain;
-        }
-
-        if(!this.thePrompt){
-            throw new Error('No prompt initialized for conversation');
-        }        
-
-        const chainParams: { prompt: PromptTemplate, values?: ChainValues } = {            
-            prompt: this.thePrompt.getMultiTemplate()
-        };      
-
-        this.createChain(chainParams);
-
-        return this.llmChain;
-    }
-
-    private async createChain(input: { prompt: PromptTemplate, values?: ChainValues }): Promise<BaseChain>
-    {
-        this.llmChain = new ConversationChain({
-            llm: this.llmChat as any,
-            prompt: input.prompt as any,              
-        });
-
-        return this.llmChain;
-    }
 
     async waitForInit(): Promise<ConvoLoader<LLMChat> | null>
     {
