@@ -9,3 +9,4 @@ exec/node_modules
 # amplify
 .amplify
 amplifyconfiguration*
+yarn.lock
