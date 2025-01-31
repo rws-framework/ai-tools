@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 
 import { ConsoleService, RWSConfigService, RWSErrorCodes} from '@rws-framework/server';
-import { InjectServices } from '@rws-framework/server/src/helpers/InjectServices';
+import { InjectServices } from '@rws-framework/server/src/services/_inject';
 import RWSPrompt, { IRWSPromptJSON, ILLMChunk } from '../../models/prompts/_prompt';
 import {VectorStoreService} from '../../services/VectorStoreService';
 import RWSVectorStore, { VectorDocType } from '../../models/convo/VectorStore';
