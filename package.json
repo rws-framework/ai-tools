@@ -1,7 +1,7 @@
 {
   "name": "@rws-framework/ai-tools",
   "private": false,
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "",
   "main": "src/index.ts",
   "scripts": {},
@@ -41,5 +41,6 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/rws-framework/ai-tools.git"
-  }
+  },
+  "_rws": true
 }
