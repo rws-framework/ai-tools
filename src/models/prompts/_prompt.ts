@@ -25,16 +25,18 @@ interface ILLMChunk {
 
 interface IPromptParams {
     hyperParameters?: IPromptHyperParameters;
-    input?: string;
+    input: CompoundInput[];    
     modelId: string;
     modelType: string;
 }
+
+type InputType = 'text' | 'image';
 
 interface IPromptEnchantment {
     enhancementId: string,
     enhancementName: string,
     enhancementParams: any,
-    input: string
+    input: CompoundInput
     output: string
 }
 
@@ -55,10 +57,10 @@ interface IRWSPromptStreamExecutor {
 }
 
 interface IRWSPromptJSON {
-    input: string;
+    input: CompoundInput[];
     enhancedInput: IPromptEnchantment[];
-    sentInput: string;
-    originalInput: string;
+    sentInput: CompoundInput[];
+    originalInput: CompoundInput[];
     output: string;
     modelId: string;
     modelType: string;
@@ -71,12 +73,22 @@ interface IRWSPromptJSON {
 
 type ChainStreamType = AsyncGenerator<IterableReadableStream<ChainValues>>;
 
+interface CompoundInput {
+    type: InputType,
+    text?: string,
+    source?: {
+        type: string,
+        media_type: string,
+        data: string
+    }
+}
+
 class RWSPrompt {
     public _stream: ChainStreamType;
-    private input: string = '';
+    private input: CompoundInput[] = [];    
     private enhancedInput: IPromptEnchantment[];
-    private sentInput: string = '';
-    private originalInput: string = '';
+    private sentInput: CompoundInput[] = [];
+    private originalInput: CompoundInput[] = [];
     private output: string = '';
     private modelId: string;
     private modelType: string;
@@ -123,7 +135,7 @@ class RWSPrompt {
     addEnchantment(enchantment: IPromptEnchantment): void
     {
         this.enhancedInput.push(enchantment);
-        this.input = enchantment.input;        
+        this.input.push(enchantment.input);        
     }
 
     getEnchantedInput(): string | null
@@ -136,23 +148,23 @@ class RWSPrompt {
         return this.modelId;
     }
 
-    readSentInput(): string
+    readSentInput(): CompoundInput[]
     {
         return this.sentInput;
     }
 
-    readInput(): string
+    readInput(): CompoundInput[]
     {
         return this.input;
     }
 
     
-    readBaseInput(): string
+    readBaseInput(): CompoundInput[]
     {
         return this.originalInput;
     }    
 
-    setBaseInput(input: string): RWSPrompt
+    setBaseInput(input: CompoundInput[]): RWSPrompt
     {
         this.originalInput = input;
         
@@ -255,9 +267,9 @@ class RWSPrompt {
         return executor.promptStream(this, read, end, debugVars);
     }
 
-    setInput(content: string): RWSPrompt
+    addInput(content: CompoundInput): RWSPrompt
     {
-        this.input = content;
+        this.input.push(content);
         return this;
     }
 
@@ -346,7 +358,7 @@ class RWSPrompt {
         if(callback){
             callback(messages, prompt);
         }else{
-            this.input = prompt + this.input;
+            this.input =  [{type: 'text', text: prompt}, ...this.input];
         }
     }
 
