@@ -1,6 +1,7 @@
 
-import RWSPrompt, { ILLMChunk, IRWSPromptRequestExecutor, IRWSSinglePromptRequestExecutor, IRWSPromptStreamExecutor, IChainCallOutput, IRWSPromptJSON, ChainStreamType } from '@rws-framework/ai-tools/src/models/prompts/_prompt';
-import RWSConvo, { IConvoDebugXMLData, IEmbeddingsHandler, ISplitterParams } from './models/convo/ConvoLoader';
+import RWSPrompt, { IChainCallOutput } from '@rws-framework/ai-tools/src/models/prompts/_prompt';
+import { ILLMChunk, IRWSPromptRequestExecutor, IRWSSinglePromptRequestExecutor, IRWSPromptStreamExecutor, IRWSPromptJSON, ChainStreamType, IAIRequestOptions, IAITool, IAIToolSchema, IAIToolParameter, IToolCall, ToolHandler } from './types/IPrompt';
+import { EmbedLoader as RWSEmbed, IConvoDebugXMLData, IEmbeddingsHandler, ISplitterParams } from './models/convo/EmbedLoader';
 import RWSVectorStore from './models/convo/VectorStore';
 import { VectorStoreService } from './services/VectorStoreService';
 import { IContextToken } from './types/IContextToken';
@@ -10,7 +11,7 @@ export {
     IAiCfg,
     VectorStoreService,
     RWSVectorStore,
-    RWSConvo,
+    RWSEmbed,
     RWSPrompt,
     ILLMChunk,
     IRWSPromptRequestExecutor,
@@ -22,5 +23,11 @@ export {
     IConvoDebugXMLData,
     IEmbeddingsHandler,
     ISplitterParams,
-    IContextToken
+    IContextToken,
+    IAIRequestOptions,
+    IAITool,
+    IAIToolSchema,
+    IAIToolParameter,
+    IToolCall,
+    ToolHandler
 };

@@ -2,9 +2,10 @@ import 'reflect-metadata';
 
 import { ConsoleService, RWSConfigService, RWSErrorCodes} from '@rws-framework/server';
 import { InjectServices } from '@rws-framework/server/src/services/_inject';
-import RWSPrompt, { IRWSPromptJSON, ILLMChunk } from '../../models/prompts/_prompt';
+import RWSPrompt from '../prompts/_prompt';
+import { IRWSPromptJSON, ILLMChunk } from '../../types/IPrompt';
 import {VectorStoreService} from '../../services/VectorStoreService';
-import RWSVectorStore, { VectorDocType } from '../../models/convo/VectorStore';
+import RWSVectorStore, { VectorDocType } from './VectorStore';
 
 import { Document } from '@langchain/core/documents';
 import { UnstructuredLoader } from '@langchain/community/document_loaders/fs/unstructured';
@@ -66,15 +67,12 @@ interface IEmbeddingsHandler<T extends object> {
 type LLMType = BaseLanguageModelInterface | Runnable<BaseLanguageModelInput, string> | Runnable<BaseLanguageModelInput, BaseMessage>;
 
 @InjectServices([VectorStoreService])
-class ConvoLoader<LLMChat extends BaseChatModel> {
+class EmbedLoader<LLMChat extends BaseChatModel> {
     private loader: UnstructuredLoader;
-    // private docSplitter: RecursiveCharacterTextSplitter;    
-
     private embeddings: IEmbeddingsHandler<any>;
 
     private docs: Document[] = [];
     private _initiated = false;
-    private store: RWSVectorStore;
     private convo_id: string;        
     private llmChat: LLMChat;
     private chatConstructor: new (config: any) => LLMChat;
@@ -97,7 +95,7 @@ class ConvoLoader<LLMChat extends BaseChatModel> {
     ) {
         this.embeddings = embeddings;
         if(convoId === null) {
-            this.convo_id = ConvoLoader.uuid();
+            this.convo_id = EmbedLoader.uuid();
         } else {
             this.convo_id = convoId;
         }                        
@@ -108,17 +106,40 @@ class ConvoLoader<LLMChat extends BaseChatModel> {
     static uuid(): string
     {
         return uuid();
+    }    
+
+    getId(): string {
+        return this.convo_id;
     }
 
+    getDocs(): VectorDocType
+    {
+        return this.docs;
+    }
 
-    async splitDocs(filePath: string, params: ISplitterParams)
+    isInitiated(): boolean 
+    {
+        return this._initiated;
+    }
+
+    getChat(): LLMChat
+    {
+        return this.llmChat;
+    }
+
+    private avgDocLength = (documents: Document[]): number => {
+        return documents.reduce((sum, doc: Document) => sum + doc.pageContent.length, 0) / documents.length;
+    };
+
+    async splitDocs(filePath: string, params: ISplitterParams): Promise<RWSVectorStore>
     {
 
         if(!this.embeddings){
             throw new Error('No embeddings provided for ConvoLoader\'s constructor. ConvoLoader.splitDocs aborting...');
         }
 
-        const splitDir = ConvoLoader.debugSplitDir(this.getId());
+        const splitDir = EmbedLoader.debugSplitDir(this.getId());
+        const finalDocs = [];
 
         if(!fs.existsSync(splitDir)){
             console.log(`Split dir ${ConsoleService.color().magentaBright(splitDir)} doesn't exist. Splitting docs...`);
@@ -142,10 +163,9 @@ class ConvoLoader<LLMChat extends BaseChatModel> {
             logConvo(`After the split we have ${splitDocs.length} documents more than the original ${orgDocs.length}.`);
             logConvo(`Average length among ${orgDocs.length} documents (after split) is ${avgCharCountPost} characters.`);
 
-            this.docs = splitDocs;            
-
             let i = 0;
-            this.docs.forEach((doc: Document) => {
+            splitDocs.forEach((doc: Document) => {
+                finalDocs.push(doc);
                 fs.writeFileSync(this.debugSplitFile(i), doc.pageContent);
                 i++;
             });
@@ -154,67 +174,17 @@ class ConvoLoader<LLMChat extends BaseChatModel> {
             
             for(const filePath of splitFiles) {
                 const txt = fs.readFileSync(splitDir + '/' + filePath, 'utf-8');
-                this.docs.push(new Document({ pageContent: txt }));              
+                finalDocs.push(new Document({ pageContent: txt }));              
             }
         }
         
-        this.store = await this.vectorStoreService.createStore(this.docs, await this.embeddings.generateEmbeddings());
+        return await this.vectorStoreService.createStore(finalDocs, await this.embeddings.generateEmbeddings());
     }
 
-    getId(): string {
-        return this.convo_id;
-    }
-
-    getDocs(): VectorDocType
-    {
-        return this.docs;
-    }
-    getStore(): RWSVectorStore
-    {
-        return this.store;
-    }
-
-    isInitiated(): boolean 
-    {
-        return this._initiated;
-    }
-
-    setPrompt(prompt: RWSPrompt): ConvoLoader<LLMChat>
-    {
-        this.thePrompt = prompt;        
-
-        this.llmChat = new this.chatConstructor({
-            streaming: true,
-            region: this.configService.get('aws_bedrock_region'),  
-            credentials: {  
-                accessKeyId: this.configService.get('aws_access_key'),  
-                secretAccessKey: this.configService.get('aws_secret_key'),  
-            },  
-            model: 'anthropic.claude-v2',            
-            maxTokens: prompt.getHyperParameter<number>('max_tokens_to_sample'),
-            temperature: prompt.getHyperParameter<number>('temperature'),
-            modelKwargs: {
-                top_p: prompt.getHyperParameter<number>('top_p'),
-                top_k: prompt.getHyperParameter<number>('top_k'),
-            }
-        });        
-
-        return this;
-    }
-
-    getChat(): LLMChat
-    {
-        return this.llmChat;
-    }
-
-    private avgDocLength = (documents: Document[]): number => {
-        return documents.reduce((sum, doc: Document) => sum + doc.pageContent.length, 0) / documents.length;
-    };
-
-    async similaritySearch(query: string, splitCount: number): Promise<string>
+    async similaritySearch(query: string, splitCount: number, store: RWSVectorStore): Promise<string>
     {
         console.log('Store is ready. Searching for embedds...');            
-        const texts = await this.getStore().getFaiss().similaritySearchWithScore(`${query}`, splitCount);
+        const texts = await store.getFaiss().similaritySearchWithScore(`${query}`, splitCount);
         console.log('Found best parts: ' + texts.length);
         return texts.map(([doc, score]: [any, number]) => `${doc['pageContent']}`).join('\n\n');    
     }
@@ -240,7 +210,7 @@ class ConvoLoader<LLMChat extends BaseChatModel> {
     }
 
 
-    async waitForInit(): Promise<ConvoLoader<LLMChat> | null>
+    async waitForInit(): Promise<EmbedLoader<LLMChat> | null>
     {
         const _self = this;
         return new Promise((resolve, reject)=>{
@@ -262,6 +232,10 @@ class ConvoLoader<LLMChat extends BaseChatModel> {
         });
     }  
 
+    async setPrompt(prompt: RWSPrompt){
+        this.thePrompt = prompt;
+    }
+
     private parseXML(xml: string, callback: (err: Error, result: any) => void): xml2js.Parser
     {
         const parser = new xml2js.Parser();        
@@ -279,11 +253,11 @@ class ConvoLoader<LLMChat extends BaseChatModel> {
     }
     
     public debugConvoFile(){
-        return `${ConvoLoader.debugConvoDir(this.getId())}/conversation.xml`;
+        return `${EmbedLoader.debugConvoDir(this.getId())}/conversation.xml`;
     }    
 
     public debugSplitFile(i: number){
-        return `${ConvoLoader.debugSplitDir(this.getId())}/${i}.splitfile`;
+        return `${EmbedLoader.debugSplitDir(this.getId())}/${i}.splitfile`;
     }    
 
     private initDebugFile(): IConvoDebugXMLOutput
@@ -291,7 +265,7 @@ class ConvoLoader<LLMChat extends BaseChatModel> {
         let xmlContent: string;
         let debugXML: IConvoDebugXMLData = null;
 
-        const convoDir = ConvoLoader.debugConvoDir(this.getId());
+        const convoDir = EmbedLoader.debugConvoDir(this.getId());
 
         if(!fs.existsSync(convoDir)){
             fs.mkdirSync(convoDir, { recursive: true });
@@ -326,5 +300,4 @@ class ConvoLoader<LLMChat extends BaseChatModel> {
 
 }
 
-export default ConvoLoader;
-export { IChainCallOutput, IConvoDebugXMLData, IEmbeddingsHandler, ISplitterParams, IBaseLangchainHyperParams };
+export { EmbedLoader, IChainCallOutput, IConvoDebugXMLData, IEmbeddingsHandler, ISplitterParams, IBaseLangchainHyperParams };

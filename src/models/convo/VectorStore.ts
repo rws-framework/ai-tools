@@ -26,6 +26,11 @@ export default class RWSVectorStore
     {
         return this.faiss;
     }
+
+    getDocs()
+    {
+        return this.docs;
+    }
 }
 
 export {

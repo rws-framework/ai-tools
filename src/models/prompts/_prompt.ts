@@ -1,87 +1,32 @@
 import { Readable } from 'stream';
 import { PromptTemplate } from '@langchain/core/prompts';
-import ConvoLoader, { IChainCallOutput } from '../../models/convo/ConvoLoader';
-import { BedrockChat } from '@langchain/community/chat_models/bedrock/web';
-import { IterableReadableStream } from '@langchain/core/utils/stream';
-import { ChainValues } from '@langchain/core/utils/types';
-import { IContextToken } from '../../types/IContextToken';
+import { EmbedLoader, IChainCallOutput } from '../convo/EmbedLoader';
 import { BaseChatModel } from '@langchain/core/language_models/chat_models';
+import { IToolCall } from '../../types/IPrompt'
+import { 
+    IPromptSender, 
+    IPromptEnchantment, 
+    IPromptParams, 
+    IPromptHyperParameters, 
+    IRWSPromptRequestExecutor, 
+    IRWSPromptStreamExecutor, 
+    IRWSSinglePromptRequestExecutor, 
+    IRWSPromptJSON, 
+    ChainStreamType, 
+    ILLMChunk,
+    IAITool,
+    IRWSHistoryMessage,
+    InputType,
+    CompoundInput,
+    ToolHandler
+} from '../../types/IPrompt';
+import { IContextToken } from '../../types/IContextToken';
 
-interface IPromptHyperParameters {
-    temperature: number,
-    top_k?: number,
-    top_p?: number,
-    [key: string]: number
+type EntryParams = {
+    modelId: string,
+    body: string,
 }
 
-interface IRWSHistoryMessage { 
-    content: string, creator: string 
-}
-
-interface ILLMChunk {
-    content: string
-    status: string
- }
-
-interface IPromptParams {
-    hyperParameters?: IPromptHyperParameters;
-    input: CompoundInput[];    
-    modelId: string;
-    modelType: string;
-}
-
-type InputType = 'text' | 'image';
-
-interface IPromptEnchantment {
-    enhancementId: string,
-    enhancementName: string,
-    enhancementParams: any,
-    input: CompoundInput
-    output: string
-}
-
-type IPromptSender = (prompt: RWSPrompt) => Promise<void>;
-
-interface IRWSPromptRequestExecutor {
-    promptRequest: (prompt: RWSPrompt, contextToken?: IContextToken | null, intruderPrompt?: string | null, debugVars?: any) => Promise<RWSPrompt>
-}
-
-
-interface IRWSSinglePromptRequestExecutor {
-    singlePromptRequest: (prompt: RWSPrompt, contextToken?: IContextToken | null, intruderPrompt?: string | null, ensureJson?: boolean, debugVars?: any) => Promise<RWSPrompt>
-}
-
-
-interface IRWSPromptStreamExecutor {
-    promptStream: (prompt: RWSPrompt, read: (chunk: ILLMChunk) => void, end: () => void, debugVars?: any) => Promise<RWSPrompt>
-}
-
-interface IRWSPromptJSON {
-    input: CompoundInput[];
-    enhancedInput: IPromptEnchantment[];
-    sentInput: CompoundInput[];
-    originalInput: CompoundInput[];
-    output: string;
-    modelId: string;
-    modelType: string;
-    multiTemplate: PromptTemplate;
-    convo: { id: string };
-    hyperParameters: IPromptHyperParameters;
-    created_at: string;
-    var_storage: any;
-}
-
-type ChainStreamType = AsyncGenerator<IterableReadableStream<ChainValues>>;
-
-interface CompoundInput {
-    type: InputType,
-    text?: string,
-    source?: {
-        type: string,
-        media_type: string,
-        data: string
-    }
-}
 
 class RWSPrompt {
     public _stream: ChainStreamType;
@@ -93,10 +38,10 @@ class RWSPrompt {
     private modelId: string;
     private modelType: string;
     private multiTemplate: PromptTemplate;
-    private convo: ConvoLoader<any>;
+    private embedLoader: EmbedLoader<any>;
     private hyperParameters: IPromptHyperParameters;
     private created_at: Date;
-
+    private toolHandlers: Map<string, ToolHandler> = new Map();
     private varStorage: any = {};
 
     private onStream = (chunk: string) => {
@@ -226,16 +171,16 @@ class RWSPrompt {
         return this.multiTemplate;
     }
 
-    setConvo(convo: ConvoLoader<BaseChatModel>): RWSPrompt
+    setEmbedLoader(embedLoader: EmbedLoader<BaseChatModel>): RWSPrompt
     {
-        this.convo = convo.setPrompt(this);        
+        this.embedLoader = embedLoader;        
         
         return this;
     }
 
-    getConvo<T extends BaseChatModel>(): ConvoLoader<T>
+    getEmbedLoader<T extends BaseChatModel>(): EmbedLoader<T>
     {
-        return this.convo;
+        return this.embedLoader;
     }
 
     replacePromptVar(key: string, val: string)
@@ -248,23 +193,23 @@ class RWSPrompt {
         return [this.modelType, this.modelId];
     }
 
-    async requestWith(executor: IRWSPromptRequestExecutor, intruderPrompt: string = null, debugVars: any = {}): Promise<void>
+    async requestWith(executor: IRWSPromptRequestExecutor, intruderPrompt: string = null, debugVars: any = {}, tools?: IAITool[]): Promise<void>
     {
         this.sentInput = this.input;
-        const returnedRWS = await executor.promptRequest(this, null, intruderPrompt, debugVars);
+        const returnedRWS = await executor.promptRequest(this, { intruderPrompt, debugVars, tools });
         this.output = returnedRWS.readOutput();        
     }
 
-    async singleRequestWith(executor: IRWSSinglePromptRequestExecutor, intruderPrompt: string = null, ensureJson: boolean = false): Promise<void>
+    async singleRequestWith(executor: IRWSSinglePromptRequestExecutor, intruderPrompt: string = null, ensureJson: boolean = false, tools?: IAITool[]): Promise<void>
     {        
-        await executor.singlePromptRequest(this, null, intruderPrompt, ensureJson);
+        await executor.singlePromptRequest(this, { intruderPrompt, ensureJson, tools });
         this.sentInput = this.input;
     }
 
-    async streamWith(executor: IRWSPromptStreamExecutor, read: (chunk: ILLMChunk) => void, end: () => void = () => {}, debugVars: any = {}): Promise<RWSPrompt>
+    async streamWith(executor: IRWSPromptStreamExecutor, read: (chunk: ILLMChunk) => void, end: () => void = () => {}, debugVars: any = {}, tools?: IAITool[]): Promise<RWSPrompt>
     {        
         this.sentInput = this.input;
-        return executor.promptStream(this, read, end, debugVars);
+        return executor.promptStream(this, read, end, { debugVars, tools });
     }
 
     addInput(content: CompoundInput): RWSPrompt
@@ -284,35 +229,6 @@ class RWSPrompt {
         return this;
     } 
 
-    async _oldreadStream(stream: Readable, react: (chunk: string) => void): Promise<void>    
-    {        
-        let first = true;
-        const chunks: string[] = []; // Replace 'any' with the actual type of your chunks
-       
-        for await (const event of stream) {            
-            // Assuming 'event' has a specific structure. Adjust according to actual event structure.
-            if ('chunk' in event && event.chunk.bytes) {
-                const chunk = JSON.parse(Buffer.from(event.chunk.bytes).toString('utf-8'));
-                if(first){
-                    console.log('chunk', chunk);
-                    first = false;
-                }
-
-                react(chunk.completion);
-
-                chunks.push(chunk.completion || chunk.generation ); // Use the actual property of 'chunk' you're interested in
-            } else if (
-                'internalServerException' in event ||
-                'modelStreamErrorException' in event ||
-                'throttlingException' in event ||
-                'validationException' in event
-            ) {
-                console.error(event);
-                break;
-            }            
-        }        
-    }
-
     private async isChainStreamType(source: any): Promise<boolean> {
         if (source && typeof source[Symbol.asyncIterator] === 'function') {
             const asyncIterator = source[Symbol.asyncIterator]();
@@ -331,7 +247,7 @@ class RWSPrompt {
         return false;
     }
 
-    async  readStreamAsText(readableStream: ReadableStream, callback: (txt: string) => void) {
+    async readStreamAsText(readableStream: ReadableStream, callback: (txt: string) => void) {
         const reader = readableStream.getReader();
                 
         let readResult: any;
@@ -362,6 +278,33 @@ class RWSPrompt {
         }
     }
 
+    registerToolHandlers(toolHandlers: { [key: string]: ToolHandler }){
+        for(const key of Object.keys(toolHandlers)){
+            this.toolHandlers.set(key, toolHandlers[key]);
+        }        
+    }
+
+    async callTools<T = unknown>(tools: IToolCall[]): Promise<T[]>
+    {
+        const results: T[] = [];
+        for(const tool of tools){
+            if(this.toolHandlers.has(tool.name)){
+                const result = await this.callAiTool<T>(tool);
+                if(result){
+                    results.push(result);
+                }                
+            }
+        }
+
+        return results;
+    }
+
+    private async callAiTool<T>(tool: IToolCall): Promise<T>
+    {
+        const handler = this.toolHandlers.get(tool.name);
+        return await handler(tool.arguments);
+    }
+
     toJSON(): IRWSPromptJSON
     {
         return {
@@ -373,8 +316,8 @@ class RWSPrompt {
             modelId: this.modelId,
             modelType: this.modelType,
             multiTemplate: this.multiTemplate,            
-            convo: {
-                id: this.convo.getId()
+            embed: {
+                id: this.embedLoader.getId()
             },
             hyperParameters: this.hyperParameters,
             var_storage: this.varStorage,
@@ -385,16 +328,4 @@ class RWSPrompt {
 
 export default RWSPrompt;
 
-export { 
-    IPromptSender, 
-    IPromptEnchantment, 
-    IPromptParams, 
-    IPromptHyperParameters, 
-    IRWSPromptRequestExecutor, 
-    IRWSPromptStreamExecutor, 
-    IRWSSinglePromptRequestExecutor, 
-    IRWSPromptJSON, 
-    IChainCallOutput, 
-    ChainStreamType, 
-    ILLMChunk 
-};
+export { IChainCallOutput };
