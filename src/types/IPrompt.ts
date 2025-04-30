@@ -43,7 +43,7 @@ interface IToolCall {
 interface IAITool {
   name: string;
   description: string;
-  input_schema: IAIToolSchema;
+  input_schema?: IAIToolSchema;
 }
 
 interface IPromptHyperParameters {
