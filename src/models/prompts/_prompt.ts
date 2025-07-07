@@ -21,6 +21,7 @@ import {
     ToolHandler
 } from '../../types/IPrompt';
 import { IContextToken } from '../../types/IContextToken';
+import { text } from 'stream/consumers';
 
 type EntryParams = {
     modelId: string,
@@ -31,7 +32,7 @@ type EntryParams = {
 class RWSPrompt {
     public _stream: ChainStreamType;
     private input: CompoundInput[] = [];    
-    private enhancedInput: IPromptEnchantment[];
+    private enhancedInput: IPromptEnchantment[] = [];
     private sentInput: CompoundInput[] = [];
     private originalInput: CompoundInput[] = [];
     private output: string = '';
@@ -79,13 +80,12 @@ class RWSPrompt {
 
     addEnchantment(enchantment: IPromptEnchantment): void
     {
-        this.enhancedInput.push(enchantment);
-        this.input.push(enchantment.input);        
+        this.enhancedInput.push(enchantment);              
     }
 
-    getEnchantedInput(): string | null
+    getEnchantedInputs(): IPromptEnchantment[]
     {
-        return this.enhancedInput[this.enhancedInput.length - 1].output;
+        return this.enhancedInput;
     }
 
     getModelId(): string
@@ -100,7 +100,8 @@ class RWSPrompt {
 
     readInput(): CompoundInput[]
     {
-        return this.input;
+        const enchantedInput: CompoundInput[] = this.enhancedInput.map(enchantment => ({ role: 'user', type:  enchantment.input.type, text: enchantment.input.text }));
+        return [...enchantedInput, ...this.input];
     }
 
     

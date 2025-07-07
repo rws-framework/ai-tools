@@ -75,8 +75,7 @@ interface IPromptEnchantment {
     enhancementId: string,
     enhancementName: string,
     enhancementParams: any,
-    input: CompoundInput
-    output: string
+    input: CompoundInput    
 }
 
 // Forward reference to RWSPrompt to avoid circular dependencies
@@ -126,6 +125,7 @@ type ChainStreamType = AsyncGenerator<IterableReadableStream<ChainValues>>;
 interface CompoundInput {
     type: InputType,
     text?: string,
+    role?: string,
     source?: {
         type: string,
         media_type: string,
