@@ -125,7 +125,7 @@ type ChainStreamType = AsyncGenerator<IterableReadableStream<ChainValues>>;
 interface CompoundInput {
     type: InputType,
     text?: string,
-    role?: string,
+    role?: 'user' | 'assistant' | 'system',
     source?: {
         type: string,
         media_type: string,
