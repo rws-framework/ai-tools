@@ -1,327 +1,226 @@
 import { Readable } from 'stream';
-import { PromptTemplate } from '@langchain/core/prompts';
-import { EmbedLoader, IChainCallOutput } from '../convo/EmbedLoader';
-import { BaseChatModel } from '@langchain/core/language_models/chat_models';
-import { IToolCall } from '../../types/IPrompt'
+import { ModuleRef } from '@nestjs/core';
 import { 
-    IPromptSender, 
-    IPromptEnchantment, 
-    IPromptParams, 
-    IPromptHyperParameters, 
-    IRWSPromptRequestExecutor, 
-    IRWSPromptStreamExecutor, 
-    IRWSSinglePromptRequestExecutor, 
-    IRWSPromptJSON, 
-    ChainStreamType, 
+    IPromptParams,
+    IRWSPromptRequestExecutor,
+    IRWSPromptStreamExecutor,
+    IRWSSinglePromptRequestExecutor,
+    IRWSPromptJSON,
+    ChainStreamType,
     ILLMChunk,
     IAITool,
     IRWSHistoryMessage,
-    InputType,
     CompoundInput,
-    ToolHandler
-} from '../../types/IPrompt';
-import { IContextToken } from '../../types/IContextToken';
-import { text } from 'stream/consumers';
+    ToolHandler,
+    IToolCall,
+    IPromptEnchantment,
+    BaseChatModel,
+    PromptTemplate,
+    EmbedLoader
+} from './inc/types';
+import { IChainCallOutput } from './inc/types';
+import { ToolManager } from './inc/tool-manager';
+import { InputOutputManager } from './inc/input-output-manager';
+import { ModelExecutionManager } from './inc/model-execution-manager';
+import { VariableStorageManager } from './inc/variable-storage-manager';
+import { ExecutionMethodsHandler, IPromptInstance } from './inc/execution-methods-handler';
 
-type EntryParams = {
-    modelId: string,
-    body: string,
-}
-
-
-class RWSPrompt {
+class RWSPrompt implements IPromptInstance {
     public _stream: ChainStreamType;
-    private input: CompoundInput[] = [];    
-    private enhancedInput: IPromptEnchantment[] = [];
-    private sentInput: CompoundInput[] = [];
-    private originalInput: CompoundInput[] = [];
-    private output: string = '';
-    private modelId: string;
-    private modelType: string;
-    private multiTemplate: PromptTemplate;
-    private embedLoader: EmbedLoader<any>;
-    private hyperParameters: IPromptHyperParameters;
     private created_at: Date;
-    private toolHandlers: Map<string, ToolHandler> = new Map();
-    private varStorage: any = {};
+    
+    // Composition over inheritance - use managers for different concerns
+    private toolManager: ToolManager;
+    private ioManager: InputOutputManager;
+    private modelManager: ModelExecutionManager;
+    private varManager: VariableStorageManager;
+    private executionHandler: ExecutionMethodsHandler;
 
-    private onStream = (chunk: string) => {
-
-    };
-
-    constructor(params: IPromptParams){
-        this.input = params.input;
-        this.originalInput = params.input;
-        this.hyperParameters = params.hyperParameters;
-        this.modelId = params.modelId;
-        this.modelType = params.modelType;
-
+    constructor(params: IPromptParams) {
+        this.toolManager = new ToolManager();
+        this.ioManager = new InputOutputManager(params.input);
+        this.modelManager = new ModelExecutionManager(params.modelId, params.modelType, params.hyperParameters);
+        this.varManager = new VariableStorageManager();
+        this.executionHandler = new ExecutionMethodsHandler();
+        
         this.created_at = new Date();
     }
 
-    listen(source: string, stream: boolean = true): RWSPrompt
-    {              
-        this.output = '';
-
-        if (!stream) {
-            this.output = source;
-        } else {           
-            this.output += source;
-            this.onStream(source);            
-        }
-        
-        return this;
-    }   
-
-    setStreamCallback(callback: (chunk: string) => void): void
-    {
-        this.onStream = callback;
-    }
-
-    addEnchantment(enchantment: IPromptEnchantment): void
-    {
-        this.enhancedInput.push(enchantment);              
-    }
-
-    getEnchantedInputs(): IPromptEnchantment[]
-    {
-        return this.enhancedInput;
-    }
-
-    getModelId(): string
-    {
-        return this.modelId;
-    }
-
-    readSentInput(): CompoundInput[]
-    {
-        return this.sentInput;
-    }
-
-    readInput(): CompoundInput[]
-    {
-        const enchantedInput: CompoundInput[] = this.enhancedInput.map(enchantment => ({ role: 'user', type:  enchantment.input.type, text: enchantment.input.text }));
-        return [...enchantedInput, ...this.input];
-    }
-
-    
-    readBaseInput(): CompoundInput[]
-    {
-        return this.originalInput;
-    }    
-
-    setBaseInput(input: CompoundInput[]): RWSPrompt
-    {
-        this.originalInput = input;
-        
+    // Delegation methods for tool management
+    setTools(tools: IAITool[]): RWSPrompt {
+        this.toolManager.setTools(tools);
         return this;
     }
 
-    injestOutput(content: string): RWSPrompt
-    {
-        this.output = content;
+    getTools(): IAITool[] {
+        return this.toolManager.getTools();
+    }
 
+    getTool(key: string): { definition: IAITool, handler: ToolHandler } | null {
+        return this.toolManager.getTool(key);
+    }
+
+    registerToolHandlers(toolHandlers: { [key: string]: ToolHandler }): void {
+        this.toolManager.registerToolHandlers(toolHandlers);
+    }
+
+    async callTools<T = unknown, O = unknown>(tools: IToolCall[], moduleRef: ModuleRef, aiToolOptions?: O): Promise<T[]> {
+        return this.toolManager.callTools<T, O>(tools, moduleRef, aiToolOptions);
+    }
+
+    // Delegation methods for input/output management
+    listen(source: string, stream: boolean = true): RWSPrompt {
+        this.ioManager.listen(source, stream);
         return this;
     }
 
-    readOutput(): string
-    {
-        return this.output;
+    setStreamCallback(callback: (chunk: string) => void): void {
+        this.ioManager.setStreamCallback(callback);
     }
 
-    getHyperParameters<T extends IPromptHyperParameters>(base: any = null): T
-    {        
-        if(base){
-            this.hyperParameters = {...base, ...this.hyperParameters};
-        }
-
-        return this.hyperParameters as T;
+    addEnchantment(enchantment: IPromptEnchantment): void {
+        this.ioManager.addEnchantment(enchantment);
     }
 
-    getHyperParameter<T>(key: keyof IPromptHyperParameters): T
-    {        
-        if(!this.hyperParameters[key]){
-            return null;
-        }
-
-        return this.hyperParameters[key] as T;
+    getEnchantedInputs(): IPromptEnchantment[] {
+        return this.ioManager.getEnchantedInputs();
     }
 
-    setHyperParameter(key: string, value: any): RWSPrompt
-    {        
-        this.hyperParameters[key] = value;
-        
-        return this;
+    readSentInput(): CompoundInput[] {
+        return this.ioManager.readSentInput();
     }
-    
-    setHyperParameters(value: any): RWSPrompt
-    {        
-        this.hyperParameters = value;
-        
+
+    readInput(): CompoundInput[] {
+        return this.ioManager.readInput();
+    }
+
+    readBaseInput(): CompoundInput[] {
+        return this.ioManager.readBaseInput();
+    }
+
+    setBaseInput(input: CompoundInput[]): RWSPrompt {
+        this.ioManager.setBaseInput(input);
         return this;
     }
 
-    setMultiTemplate(template: PromptTemplate): RWSPrompt
-    {
-        this.multiTemplate = template;
+    injestOutput(content: string): RWSPrompt {
+        this.ioManager.injestOutput(content);
         return this;
     }
 
-    getMultiTemplate(): PromptTemplate
-    {
-        return this.multiTemplate;
+    readOutput(): string {
+        return this.ioManager.readOutput();
     }
 
-    setEmbedLoader(embedLoader: EmbedLoader<BaseChatModel>): RWSPrompt
-    {
-        this.embedLoader = embedLoader;        
-        
+    addInput(content: CompoundInput): RWSPrompt {
+        this.ioManager.addInput(content);
         return this;
     }
 
-    getEmbedLoader<T extends BaseChatModel>(): EmbedLoader<T>
-    {
-        return this.embedLoader;
+    addHistory(messages: IRWSHistoryMessage[], historyPrompt: string, callback?: (messages: IRWSHistoryMessage[], prompt: string) => void): void {
+        this.ioManager.addHistory(messages, historyPrompt, callback);
     }
 
-    replacePromptVar(key: string, val: string)
-    {
-
+    async readStreamAsText(readableStream: ReadableStream, callback: (txt: string) => void): Promise<void> {
+        return this.ioManager.readStreamAsText(readableStream, callback);
     }
 
-    getModelMetadata(): [string, string]
-    {
-        return [this.modelType, this.modelId];
+    // Delegation methods for model management
+    getModelId(): string {
+        return this.modelManager.getModelId();
     }
 
-    async requestWith(executor: IRWSPromptRequestExecutor, intruderPrompt: string = null, debugVars: any = {}, tools?: IAITool[]): Promise<void>
-    {
-        this.sentInput = this.input;
-        const returnedRWS = await executor.promptRequest(this, { intruderPrompt, debugVars, tools });
-        this.output = returnedRWS.readOutput();        
+    getModelMetadata(): [string, string] {
+        return this.modelManager.getModelMetadata();
     }
 
-    async singleRequestWith(executor: IRWSSinglePromptRequestExecutor, intruderPrompt: string = null, ensureJson: boolean = false, tools?: IAITool[]): Promise<void>
-    {        
-        await executor.singlePromptRequest(this, { intruderPrompt, ensureJson, tools });
-        this.sentInput = this.input;
-    }
-
-    async streamWith(executor: IRWSPromptStreamExecutor, read: (chunk: ILLMChunk) => void, end: () => void = () => {}, debugVars: any = {}, tools?: IAITool[]): Promise<RWSPrompt>
-    {        
-        this.sentInput = this.input;
-        return executor.promptStream(this, read, end, { debugVars, tools });
-    }
-
-    addInput(content: CompoundInput): RWSPrompt
-    {
-        this.input.push(content);
+    setMultiTemplate(template: PromptTemplate): RWSPrompt {
+        this.modelManager.setMultiTemplate(template);
         return this;
     }
 
-    getVar<T>(key: string): T
-    {
-        return Object.keys(this.varStorage).includes(key) ? this.varStorage[key] : null;
+    getMultiTemplate(): PromptTemplate {
+        return this.modelManager.getMultiTemplate();
+    }
+
+    setEmbedLoader(embedLoader: EmbedLoader<BaseChatModel>): RWSPrompt {
+        this.modelManager.setEmbedLoader(embedLoader);
+        return this;
+    }
+
+    getEmbedLoader<T extends BaseChatModel>(): EmbedLoader<T> {
+        return this.modelManager.getEmbedLoader<T>();
+    }
+
+    getHyperParameters<T extends any>(base: any = null): T {
+        return this.modelManager.getHyperParameters<T>(base);
+    }
+
+    getHyperParameter<T>(key: string): T {
+        return this.modelManager.getHyperParameter<T>(key as any);
+    }
+
+    setHyperParameter(key: string, value: any): RWSPrompt {
+        this.modelManager.setHyperParameter(key, value);
+        return this;
+    }
+
+    setHyperParameters(value: any): RWSPrompt {
+        this.modelManager.setHyperParameters(value);
+        return this;
+    }
+
+    replacePromptVar(key: string, val: string): void {
+        this.modelManager.replacePromptVar(key, val);
+    }
+
+    // Delegation methods for variable storage
+    getVar<T>(key: string): T {
+        return this.varManager.getVar<T>(key);
     }
 
     setVar<T>(key: string, val: T): RWSPrompt {
-        this.varStorage[key] = val;
-
+        this.varManager.setVar<T>(key, val);
         return this;
-    } 
-
-    private async isChainStreamType(source: any): Promise<boolean> {
-        if (source && typeof source[Symbol.asyncIterator] === 'function') {
-            const asyncIterator = source[Symbol.asyncIterator]();
-            if (typeof asyncIterator.next === 'function' && 
-                typeof asyncIterator.throw === 'function' && 
-                typeof asyncIterator.return === 'function') {
-                try {
-                    // Optionally check if the next method yields a value of the expected type
-                    const { value, done } = await asyncIterator.next();
-                    return !done && value instanceof ReadableStream; // or whatever check makes sense for IterableReadableStream<ChainValues>
-                } catch (error) {
-                    // Handle or ignore error
-                }
-            }
-        }
-        return false;
     }
 
-    async readStreamAsText(readableStream: ReadableStream, callback: (txt: string) => void) {
-        const reader = readableStream.getReader();
-                
-        let readResult: any;
-
-        // Continuously read from the stream
-        while (!(readResult = await reader.read()).done) {
-            
-            if (readResult.value && readResult.value.response) {
-                // Emit each chunk text as it's read
-                callback(readResult.value.response);
-            }          
-        }
-        
+    // Delegation methods for execution
+    async requestWith(executor: IRWSPromptRequestExecutor, intruderPrompt: string = null, debugVars: any = {}, tools?: IAITool[]): Promise<void> {
+        return this.executionHandler.requestWith(this, executor, intruderPrompt, debugVars, tools);
     }
 
-    addHistory(messages: IRWSHistoryMessage[], historyPrompt: string, callback?: (messages: IRWSHistoryMessage[], prompt: string) => void){
-        const prompt = `
-            ${messages.map(message => `
-                ${message.creator}: ${message.content}
-            `).join('\n\n')}
-            ${historyPrompt}
-        ` ;
-
-        if(callback){
-            callback(messages, prompt);
-        }else{
-            this.input =  [{type: 'text', text: prompt}, ...this.input];
-        }
+    async singleRequestWith(executor: IRWSSinglePromptRequestExecutor, intruderPrompt: string = null, ensureJson: boolean = false, tools?: IAITool[]): Promise<void> {
+        return this.executionHandler.singleRequestWith(this, executor, intruderPrompt, ensureJson, tools);
     }
 
-    registerToolHandlers(toolHandlers: { [key: string]: ToolHandler }){
-        for(const key of Object.keys(toolHandlers)){
-            this.toolHandlers.set(key, toolHandlers[key]);
-        }        
+    async streamWith(executor: IRWSPromptStreamExecutor, read: (chunk: ILLMChunk) => void, end: () => void = () => { }, debugVars: any = {}, tools?: IAITool[]): Promise<RWSPrompt> {
+        return this.executionHandler.streamWith(this, executor, read, end, debugVars, tools);
     }
 
-    async callTools<T = unknown>(tools: IToolCall[]): Promise<T[]>
-    {
-        const results: T[] = [];
-        for(const tool of tools){
-            if(this.toolHandlers.has(tool.name)){
-                const result = await this.callAiTool<T>(tool);
-                if(result){
-                    results.push(result);
-                }                
-            }
-        }
-
-        return results;
+    // IPromptInstance interface implementation
+    getInput(): CompoundInput[] {
+        return this.ioManager.getInput();
     }
 
-    private async callAiTool<T>(tool: IToolCall): Promise<T>
-    {
-        const handler = this.toolHandlers.get(tool.name);
-        return await handler(tool.arguments);
+    setSentInput(input: CompoundInput[]): void {
+        this.ioManager.setSentInput(input);
     }
 
-    toJSON(): IRWSPromptJSON
-    {
+    toJSON(): IRWSPromptJSON {
         return {
-            input: this.input,            
-            enhancedInput: this.enhancedInput,
-            sentInput: this.sentInput,
-            originalInput: this.originalInput,
-            output: this.output,
-            modelId: this.modelId,
-            modelType: this.modelType,
-            multiTemplate: this.multiTemplate,            
+            input: this.ioManager.getInput(),
+            enhancedInput: this.ioManager.getEnhancedInput(),
+            sentInput: this.ioManager.readSentInput(),
+            originalInput: this.ioManager.getOriginalInput(),
+            output: this.ioManager.getOutput(),
+            modelId: this.modelManager.getModelId(),
+            modelType: this.modelManager.getModelType(),
+            multiTemplate: this.modelManager.getMultiTemplate(),
             embed: {
-                id: this.embedLoader.getId()
+                id: this.modelManager.getEmbedLoaderId()
             },
-            hyperParameters: this.hyperParameters,
-            var_storage: this.varStorage,
+            hyperParameters: this.modelManager.getAllHyperParameters(),
+            var_storage: this.varManager.getAllVars(),
             created_at: this.created_at.toISOString()
         };
     }

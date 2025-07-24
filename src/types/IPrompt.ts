@@ -36,8 +36,12 @@ interface IAIToolSchema {
 
 interface IToolCall {
     id: string;
-    name: string;
-    arguments: Record<string, any>;
+    index: number;
+    type: string;
+    function: {
+      name: string;
+      arguments: string | Record<string, any>
+    };    
   }
 
 interface IAITool {
