@@ -26,8 +26,7 @@ export class ToolManager {
         return null;
     }
 
-    registerToolHandlers(toolHandlers: { [key: string]: ToolHandler }): void {
-        console.log({ toolHandlers });
+    registerToolHandlers(toolHandlers: { [key: string]: ToolHandler }): void {        
         for (const key of Object.keys(toolHandlers)) {
             this.toolHandlers.set(key, toolHandlers[key]);
         }
