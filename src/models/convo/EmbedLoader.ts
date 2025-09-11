@@ -4,17 +4,19 @@ import { ConsoleService, RWSConfigService, RWSErrorCodes} from '@rws-framework/s
 import { InjectServices } from '@rws-framework/server/src/services/_inject';
 import RWSPrompt from '../prompts/_prompt';
 import { IRWSPromptJSON, ILLMChunk } from '../../types/IPrompt';
-import {VectorStoreService} from '../../services/VectorStoreService';
-import RWSVectorStore, { VectorDocType } from './VectorStore';
+
+import RWSVectorStore, { VectorDocType, IVectorStoreConfig } from './VectorStore';
 
 import { Document } from '@langchain/core/documents';
 import { UnstructuredLoader } from '@langchain/community/document_loaders/fs/unstructured';
+import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
 
 import { BaseChatModel  } from "@langchain/core/language_models/chat_models";
 import { BaseLanguageModelInterface, BaseLanguageModelInput } from '@langchain/core/language_models/base';
 import { Runnable } from '@langchain/core/runnables';
 import { BaseMessage } from '@langchain/core/messages';
-
+import { EmbeddingsInterface } from '@langchain/core/embeddings';
+import { CohereEmbeddings } from '@langchain/cohere';
 
 import { v4 as uuid } from 'uuid';
 import xml2js from 'xml2js';
@@ -59,6 +61,12 @@ interface IChainCallOutput {
     text: string
 }
 
+interface IEmbeddingsConfig {
+    provider: 'cohere';
+    apiKey: string;
+    model?: string;
+}
+
 interface IEmbeddingsHandler<T extends object> {
     generateEmbeddings: (text?: string) => Promise<T>
     storeEmbeddings: (embeddings: any, convoId: string) => Promise<void>
@@ -66,41 +74,64 @@ interface IEmbeddingsHandler<T extends object> {
 
 type LLMType = BaseLanguageModelInterface | Runnable<BaseLanguageModelInput, string> | Runnable<BaseLanguageModelInput, BaseMessage>;
 
-@InjectServices([VectorStoreService])
 class EmbedLoader<LLMChat extends BaseChatModel> {
     private loader: UnstructuredLoader;
-    private embeddings: IEmbeddingsHandler<any>;
+    private embeddings: EmbeddingsInterface;
+    private docSplitter: RecursiveCharacterTextSplitter;
 
     private docs: Document[] = [];
     private _initiated = false;
     private convo_id: string;        
     private llmChat: LLMChat;
-    private chatConstructor: new (config: any) => LLMChat;
+    
     private thePrompt: RWSPrompt;
-
-    vectorStoreService: VectorStoreService;
-    configService: RWSConfigService<IAiCfg>;
+    private vectorStoreConfig: IVectorStoreConfig;
+    
+    configService: RWSConfigService<any>;
 
     public _baseSplitterParams: ISplitterParams;    
     
-    constructor(
-        chatConstructor: new (config: any) => LLMChat, 
-        embeddings: IEmbeddingsHandler<any> | null = null, 
+    constructor(        
+        embeddingsConfig: IEmbeddingsConfig | null = null, 
         convoId: string | null = null, 
         baseSplitterParams: ISplitterParams = {
             chunkSize: 400, 
             chunkOverlap: 80, 
             separators: ['/n/n','.']
-        }
+        },
+        vectorStoreConfig: IVectorStoreConfig = { type: 'memory' }
     ) {
-        this.embeddings = embeddings;
+        if (embeddingsConfig) {
+            this.initializeEmbeddings(embeddingsConfig);
+        }
+        
         if(convoId === null) {
             this.convo_id = EmbedLoader.uuid();
         } else {
             this.convo_id = convoId;
         }                        
-        this.chatConstructor = chatConstructor;    
-        this._baseSplitterParams = baseSplitterParams;  
+        
+        this._baseSplitterParams = baseSplitterParams;
+        this.vectorStoreConfig = vectorStoreConfig;
+
+        this.docSplitter = new RecursiveCharacterTextSplitter({
+            chunkSize: baseSplitterParams.chunkSize,
+            chunkOverlap: baseSplitterParams.chunkOverlap,
+            separators: baseSplitterParams.separators
+        });
+    }
+
+    private initializeEmbeddings(config: IEmbeddingsConfig): void {
+        switch (config.provider) {
+            case 'cohere':
+                this.embeddings = new CohereEmbeddings({
+                    apiKey: config.apiKey,
+                    model: config.model || 'embed-english-v3.0'
+                });
+                break;
+            default:
+                throw new Error(`Unsupported embedding provider: ${config.provider}`);
+        }
     }
 
     static uuid(): string
@@ -133,7 +164,6 @@ class EmbedLoader<LLMChat extends BaseChatModel> {
 
     async splitDocs(filePath: string, params: ISplitterParams): Promise<RWSVectorStore>
     {
-
         if(!this.embeddings){
             throw new Error('No embeddings provided for ConvoLoader\'s constructor. ConvoLoader.splitDocs aborting...');
         }
@@ -145,23 +175,17 @@ class EmbedLoader<LLMChat extends BaseChatModel> {
             console.log(`Split dir ${ConsoleService.color().magentaBright(splitDir)} doesn't exist. Splitting docs...`);
             this.loader = new UnstructuredLoader(filePath);
 
-            // this.docSplitter = new RecursiveCharacterTextSplitter({
-            //     chunkSize: params.chunkSize, // The size of the chunk that should be split.
-            //     chunkOverlap: params.chunkOverlap, // Adding overalap so that if a text is broken inbetween, next document may have part of the previous document 
-            //     separators: params.separators // In this case we are assuming that /n/n would mean one whole sentence. In case there is no nearing /n/n then "." will be used instead. This can be anything that helps derive a complete sentence .
-            // });
-
             fs.mkdirSync(splitDir, { recursive: true });
             
             const orgDocs = await this.loader.load();
-            const splitDocs: any[] = [];//await this.docSplitter.splitDocuments(orgDocs);
+            const splitDocs = await this.docSplitter.splitDocuments(orgDocs);
 
             const avgCharCountPre = this.avgDocLength(orgDocs);
             const avgCharCountPost = this.avgDocLength(splitDocs);
 
             logConvo(`Average length among ${orgDocs.length} documents loaded is ${avgCharCountPre} characters.`);
             logConvo(`After the split we have ${splitDocs.length} documents more than the original ${orgDocs.length}.`);
-            logConvo(`Average length among ${orgDocs.length} documents (after split) is ${avgCharCountPost} characters.`);
+            logConvo(`Average length among ${splitDocs.length} documents (after split) is ${avgCharCountPost} characters.`);
 
             let i = 0;
             splitDocs.forEach((doc: Document) => {
@@ -177,16 +201,74 @@ class EmbedLoader<LLMChat extends BaseChatModel> {
                 finalDocs.push(new Document({ pageContent: txt }));              
             }
         }
-        
-        return await this.vectorStoreService.createStore(finalDocs, await this.embeddings.generateEmbeddings());
+                
+        const vectorStore = new RWSVectorStore(finalDocs, this.embeddings, this.vectorStoreConfig);
+        return await vectorStore.init();
     }
 
     async similaritySearch(query: string, splitCount: number, store: RWSVectorStore): Promise<string>
     {
         console.log('Store is ready. Searching for embedds...');            
-        const texts = await store.getFaiss().similaritySearchWithScore(`${query}`, splitCount);
+        const texts = await store.similaritySearchWithScore(query, splitCount);
         console.log('Found best parts: ' + texts.length);
         return texts.map(([doc, score]: [any, number]) => `${doc['pageContent']}`).join('\n\n');    
+    }
+
+    /**
+     * Index text content directly without file loading
+     */
+    async indexTextContent(
+        content: string, 
+        documentId: string | number, 
+        metadata: Record<string, any> = {}
+    ): Promise<RWSVectorStore> {
+        if (!this.embeddings) {
+            throw new Error('No embeddings provided for ConvoLoader. Cannot index text content.');
+        }
+
+        // Split the content into chunks
+        const docs = await this.docSplitter.createDocuments([content], [{
+            documentId,
+            ...metadata
+        }]);
+
+        // Create and initialize vector store
+        const vectorStore = new RWSVectorStore(docs, this.embeddings, this.vectorStoreConfig);
+        return await vectorStore.init();
+    }
+
+    /**
+     * Search for similar content with detailed results
+     */
+    async searchSimilarWithDetails(
+        query: string, 
+        store: RWSVectorStore, 
+        maxResults: number = 5,
+        threshold: number = 0.7
+    ): Promise<Array<{ content: string; score: number; metadata: any }>> {
+        const results = await store.similaritySearchWithScore(query, maxResults);
+        
+        return results
+            .filter(([_, score]) => score >= threshold)
+            .map(([doc, score]) => ({
+                content: doc.pageContent,
+                score,
+                metadata: doc.metadata || {}
+            }));
+    }
+
+    /**
+     * Get or create embeddings instance
+     */
+    getEmbeddings(): EmbeddingsInterface {
+        return this.embeddings;
+    }
+
+    /**
+     * Update embeddings configuration
+     */
+    updateEmbeddingsConfig(config: IEmbeddingsConfig): void {
+        this.initializeEmbeddings(config);
     }
     
     private async debugCall(debugCallback: (debugData: IConvoDebugXMLData) => Promise<IConvoDebugXMLData> = null)
@@ -300,4 +382,4 @@ class EmbedLoader<LLMChat extends BaseChatModel> {
 
 }
 
-export { EmbedLoader, IChainCallOutput, IConvoDebugXMLData, IEmbeddingsHandler, ISplitterParams, IBaseLangchainHyperParams };
+export { EmbedLoader, IChainCallOutput, IConvoDebugXMLData, IEmbeddingsHandler, IEmbeddingsConfig, ISplitterParams, IBaseLangchainHyperParams };
