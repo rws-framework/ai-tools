@@ -3,6 +3,7 @@ import { IterableReadableStream } from '@langchain/core/utils/stream';
 import { ChainValues } from '@langchain/core/utils/types';
 import { IContextToken } from './IContextToken';
 import { BaseChatModel } from '@langchain/core/language_models/chat_models';
+import z4, { Schema } from 'zod/v4';
 
 // General tool interfaces for AI models
 interface IAIToolParameterBase {
@@ -92,6 +93,7 @@ interface IAIRequestOptions {
     intruderPrompt?: string | null, 
     ensureJson?: boolean, 
     debugVars?: any,
+    schema?: z4.core.$ZodType | Schema,
     tools?: IAITool[]
 }
 
@@ -114,7 +116,7 @@ interface IRWSPromptJSON {
     enhancedInput: IPromptEnchantment[];
     sentInput: CompoundInput[];
     originalInput: CompoundInput[];
-    output: string;
+    output: string | object;
     modelId: string;
     modelType: string;
     multiTemplate: PromptTemplate;

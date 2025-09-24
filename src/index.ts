@@ -1,5 +1,5 @@
 
-import RWSPrompt, { IChainCallOutput } from '@rws-framework/ai-tools/src/models/prompts/_prompt';
+import RWSPrompt, { IChainCallOutput } from './models/prompts/_prompt';
 import { ILLMChunk, IRWSPromptRequestExecutor, IRWSSinglePromptRequestExecutor, IRWSPromptStreamExecutor, IRWSPromptJSON, ChainStreamType, IAIRequestOptions, IAITool, IAIToolSchema, IAIToolParameter, IToolCall, ToolHandler } from './types/IPrompt';
 import { EmbedLoader as RWSEmbed, IConvoDebugXMLData, IEmbeddingsHandler, ISplitterParams } from './models/convo/EmbedLoader';
 import RWSVectorStore from './models/convo/VectorStore';
@@ -9,8 +9,10 @@ import { LangChainRAGService, ILangChainRAGConfig, IRAGIndexRequest, IRAGSearchR
 import { IContextToken } from './types/IContextToken';
 import { IEmbeddingConfig, IChunkConfig } from './types';
 import type { IAiCfg } from './types/IAiCfg';
+import { z as ZOD } from 'zod/v4';
 
 export {    
+    ZOD,
     IAiCfg,
     RWSVectorStore,
     RWSEmbed,

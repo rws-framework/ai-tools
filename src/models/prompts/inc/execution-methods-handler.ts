@@ -7,11 +7,11 @@ import {
 } from './types';
 
 export interface IPromptInstance {
-    readOutput(): string;
+    readOutput(): string | object;
     readInput(): any[];
     getInput(): any[];
     setSentInput(input: any[]): void;
-    injestOutput(content: string): void;
+    injestOutput(content: string | object): void;
 }
 
 export class ExecutionMethodsHandler {

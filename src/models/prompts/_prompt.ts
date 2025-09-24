@@ -69,7 +69,7 @@ class RWSPrompt implements IPromptInstance {
     }
 
     // Delegation methods for input/output management
-    listen(source: string, stream: boolean = true): RWSPrompt {
+    listen(source: string | object, stream: boolean = true): RWSPrompt {        
         this.ioManager.listen(source, stream);
         return this;
     }
@@ -108,7 +108,7 @@ class RWSPrompt implements IPromptInstance {
         return this;
     }
 
-    readOutput(): string {
+    readOutput(): string | object {
         return this.ioManager.readOutput();
     }
 

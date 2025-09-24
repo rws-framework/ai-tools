@@ -5,7 +5,7 @@ export class InputOutputManager {
     private enhancedInput: IPromptEnchantment[] = [];
     private sentInput: CompoundInput[] = [];
     private originalInput: CompoundInput[] = [];
-    private output: string = '';
+    private output: string | object = null;
     private onStream: (chunk: string) => void = () => {};
 
     constructor(input: CompoundInput[]) {
@@ -54,18 +54,20 @@ export class InputOutputManager {
         this.output = content;
     }
 
-    readOutput(): string {
+    readOutput(): string | object{
         return this.output;
     }
 
-    listen(source: string, stream: boolean = true): void {
-        this.output = '';
+    listen(source: string | object, stream: boolean = true): void {
+        if(stream){
+            this.output = '';
+        }        
 
         if (!stream) {
             this.output = source;
         } else {
-            this.output += source;
-            this.onStream(source);
+            this.output += source as string;
+            this.onStream(source as string);
         }
     }
 
@@ -114,7 +116,7 @@ export class InputOutputManager {
         return this.originalInput;
     }
 
-    getOutput(): string {
+    getOutput(): string | object {
         return this.output;
     }
 }
