@@ -35,10 +35,11 @@ export class InputOutputManager {
 
     readInput(): CompoundInput[] {
         const enchantedInput: CompoundInput[] = this.enhancedInput.map(enchantment => ({ 
-            role: 'user', 
+            role: enchantment.input.role || 'user', 
             type: enchantment.input.type, 
             text: enchantment.input.text 
         }));
+
         return [...enchantedInput, ...this.input];
     }
 
