@@ -4,11 +4,11 @@ import { ILLMChunk, IRWSPromptRequestExecutor, IRWSSinglePromptRequestExecutor, 
 import { EmbedLoader as RWSEmbed, IConvoDebugXMLData, IEmbeddingsHandler, ISplitterParams } from './models/convo/EmbedLoader';
 import RWSVectorStore from './models/convo/VectorStore';
 import { LangChainEmbeddingService } from './services/LangChainEmbeddingService';
-import { OpenAIRateLimitingService, IRateLimitConfig } from './services/OpenAIRateLimitingService';
+import { OpenAIRateLimitingService } from './services/OpenAIRateLimitingService';
 import { LangChainVectorStoreService, IVectorStoreConfig, IDocumentChunk, IVectorSearchRequest, IVectorSearchResponse, ISearchResult } from './services/LangChainVectorStoreService';
 import { LangChainRAGService, ILangChainRAGConfig, IRAGIndexRequest, IRAGSearchRequest, IRAGResponse, IRAGStats } from './services/LangChainRAGService';
 import { IContextToken } from './types/IContextToken';
-import { IEmbeddingConfig, IChunkConfig } from './types';
+import { IEmbeddingConfig, IChunkConfig, IRateLimitConfig } from './types';
 import type { IAiCfg } from './types/IAiCfg';
 import { z as ZOD } from 'zod/v4';
 
@@ -43,7 +43,7 @@ export {
     // Types
     IEmbeddingConfig,
     IChunkConfig,
-    IRateLimitConfig,
+    IRateLimitConfig,    
     IVectorStoreConfig,
     IDocumentChunk,
     IVectorSearchRequest,

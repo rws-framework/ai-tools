@@ -42,3 +42,17 @@ export interface IRAGStats {
     totalDocuments: number;
     knowledgeItems: number;
 }
+
+export interface IRateLimitConfig {
+    rpm?: number;           // Requests per minute
+    tpm?: number;           // Tokens per minute  
+    concurrency?: number;   // Parallel requests
+    maxRetries?: number;    // Maximum retry attempts
+    baseBackoffMs?: number; // Base backoff delay
+    safetyFactor?: number;  // Safety factor for limits
+}
+
+export interface IBatchMetadata<T = any> {
+    start: number;
+    batch: T[];
+}

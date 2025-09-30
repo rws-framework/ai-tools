@@ -185,7 +185,7 @@ export class LangChainRAGService {
                 chunkId: result.chunkId,                
             }));
 
-            this.log('log', `[SEARCH] Found ${results.length} relevant chunks for query: "${request.query}"\n ${JSON.stringify({ results})}`);
+            this.log('log', `[SEARCH] Found ${results.length} relevant chunks for query: "${request.query}"\n`);
 
             return {
                 success: true,

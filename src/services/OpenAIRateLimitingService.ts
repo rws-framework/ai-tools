@@ -1,32 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import PQueue from 'p-queue';
+import { IBatchMetadata, IRateLimitConfig } from '../types/rag.types';
+import tiktoken from 'tiktoken';
 
-// Optional tiktoken import
 let encoding_for_model: any = null;
-try {
-    const tiktoken = require('tiktoken');
-    encoding_for_model = tiktoken.encoding_for_model;
-} catch (e) {
-    console.warn('tiktoken not available, using character-based token estimation');
-}
-
-export interface IRateLimitConfig {
-    rpm?: number;           // Requests per minute
-    tpm?: number;           // Tokens per minute  
-    concurrency?: number;   // Parallel requests
-    maxRetries?: number;    // Maximum retry attempts
-    baseBackoffMs?: number; // Base backoff delay
-    safetyFactor?: number;  // Safety factor for limits
-}
-
-export interface IBatchMetadata<T = any> {
-    start: number;
-    batch: T[];
-}
+encoding_for_model = tiktoken.encoding_for_model
 
 @Injectable()
 export class OpenAIRateLimitingService {
-    private static readonly DEFAULT_CONFIG: Required<IRateLimitConfig> = {
+    static readonly DEFAULT_CONFIG: Required<IRateLimitConfig> = {
         rpm: 500,
         tpm: 300_000,
         concurrency: 4,

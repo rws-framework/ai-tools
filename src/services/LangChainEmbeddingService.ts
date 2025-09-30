@@ -51,22 +51,20 @@ export class LangChainEmbeddingService {
                     apiKey: this.config.apiKey,
                     model: this.config.model || 'text-embedding-3-large',
                     batchSize: 1 // We'll handle batching ourselves
-                });
-                
-                                
-                this.rateLimitingService.initialize(this.config.model || 'text-embedding-3-large', {
-                    rpm: 500,
-                    tpm: 300_000,
-                    concurrency: 4,
-                    maxRetries: 6,
-                    baseBackoffMs: 500,
-                    safetyFactor: 0.75
-                });
+                });                                
+                        
                 break;    
                 
             default:
                 throw new Error(`Unsupported embedding provider: ${this.config.provider}`);
         }
+
+        if(this.config.rateLimiting){
+            const rateLimitingCfg = {...OpenAIRateLimitingService.DEFAULT_CONFIG, ...this.config.rateLimiting};
+
+            this.rateLimitingService.initialize(this.config.model || 'text-embedding-3-large', rateLimitingCfg);
+            console.log('Inintialized rate limiting with config:', rateLimitingCfg);
+        }     
 
         console.log(`Initialized ${this.config.provider} embeddings with model ${this.config.model}`, this.config.apiKey);
     }
@@ -82,7 +80,7 @@ export class LangChainEmbeddingService {
     async embedTexts(texts: string[]): Promise<number[][]> {
         this.ensureInitialized();
         
-        if (this.config.provider === 'openai' && this.rateLimitingService) {
+        if (this.config.rateLimiting) {
             return await this.rateLimitingService.executeWithRateLimit(
                 texts,
                 async (batch: string[]) => {
@@ -102,8 +100,8 @@ export class LangChainEmbeddingService {
     async embedText(text: string): Promise<number[]> {
         this.ensureInitialized();
         
-        if (this.config.provider === 'openai' && this.rateLimitingService) {
-            // For single texts with OpenAI, use the rate-controlled batch method
+        if (this.config.rateLimiting) {
+            
             const results = await this.rateLimitingService.executeWithRateLimit(
                 [text],
                 async (batch: string[]) => {
@@ -125,9 +123,11 @@ export class LangChainEmbeddingService {
         
         // Use our custom TextChunker instead of LangChain's splitter
         // Use safe token limits - the TextChunker handles token estimation internally
-        const maxTokens = 450; // Safe token limit for embedding models
+        const maxTokens = this.chunkConfig?.chunkSize || 450; // Safe token limit for embedding models
         const overlap = this.chunkConfig?.chunkOverlap || 50; // Character overlap, not token
         
+        console.log('[LCEmbeddingService] Chunking with:', this.chunkConfig);
+
         return TextChunker.chunkText(text, maxTokens, overlap);
     }
 

@@ -1,3 +1,5 @@
+import { IRateLimitConfig } from "./rag.types";
+
 /**
  * Embedding service configuration interfaces
  */
@@ -6,6 +8,7 @@ export interface IEmbeddingConfig {
     apiKey: string;
     model?: string;
     batchSize?: number;
+    rateLimiting?: IRateLimitConfig
 }
 
 export interface IChunkConfig {
