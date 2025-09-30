@@ -2,7 +2,7 @@
  * Embedding service configuration interfaces
  */
 export interface IEmbeddingConfig {
-    provider: 'cohere';
+    provider: 'cohere' | 'openai';
     apiKey: string;
     model?: string;
     batchSize?: number;

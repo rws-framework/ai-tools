@@ -1,10 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { Embeddings } from '@langchain/core/embeddings';
 import { CohereEmbeddings } from '@langchain/cohere';
+import { OpenAIEmbeddings } from '@langchain/openai';
 import { Document } from '@langchain/core/documents';
 import { IEmbeddingConfig, IChunkConfig } from '../types';
 import { TextChunker } from './TextChunker';
 import RWSVectorStore, { VectorDocType, IVectorStoreConfig } from '../models/convo/VectorStore';
+import { OpenAIRateLimitingService } from './OpenAIRateLimitingService';
 
 @Injectable()
 export class LangChainEmbeddingService {
@@ -14,9 +16,7 @@ export class LangChainEmbeddingService {
     private isInitialized = false;
     private vectorStore: RWSVectorStore | null = null;
 
-    constructor() {
-        // Empty constructor for NestJS dependency injection
-    }
+    constructor(private rateLimitingService: OpenAIRateLimitingService) {}
 
     /**
      * Initialize the service with configuration
@@ -35,20 +35,6 @@ export class LangChainEmbeddingService {
         this.isInitialized = true;
     }
 
-    /**
-     * Alternative constructor-like method for backward compatibility
-     */
-    static create(config: IEmbeddingConfig, chunkConfig?: IChunkConfig): LangChainEmbeddingService {
-        const service = new LangChainEmbeddingService();
-        service.config = config;
-        service.chunkConfig = chunkConfig || {
-            chunkSize: 1000,
-            chunkOverlap: 200
-        };
-        service.initializeEmbeddings();
-        service.isInitialized = true;
-        return service;
-    }
 
     private initializeEmbeddings(): void {
         switch (this.config.provider) {
@@ -59,10 +45,30 @@ export class LangChainEmbeddingService {
                     batchSize: this.config.batchSize || 96
                 });
                 break;
+
+            case 'openai':
+                this.embeddings = new OpenAIEmbeddings({
+                    apiKey: this.config.apiKey,
+                    model: this.config.model || 'text-embedding-3-large',
+                    batchSize: 1 // We'll handle batching ourselves
+                });
+                
+                                
+                this.rateLimitingService.initialize(this.config.model || 'text-embedding-3-large', {
+                    rpm: 500,
+                    tpm: 300_000,
+                    concurrency: 4,
+                    maxRetries: 6,
+                    baseBackoffMs: 500,
+                    safetyFactor: 0.75
+                });
+                break;    
                 
             default:
                 throw new Error(`Unsupported embedding provider: ${this.config.provider}`);
         }
+
+        console.log(`Initialized ${this.config.provider} embeddings with model ${this.config.model}`, this.config.apiKey);
     }
 
     private initializeTextSplitter(chunkConfig?: IChunkConfig): void {
@@ -70,19 +76,44 @@ export class LangChainEmbeddingService {
         // This method is kept for compatibility but doesn't initialize anything
     }
 
-    /**
-     * Generate embeddings for multiple texts
+        /**
+     * Generate embeddings for multiple texts with sophisticated rate limiting
      */
     async embedTexts(texts: string[]): Promise<number[][]> {
         this.ensureInitialized();
+        
+        if (this.config.provider === 'openai' && this.rateLimitingService) {
+            return await this.rateLimitingService.executeWithRateLimit(
+                texts,
+                async (batch: string[]) => {
+                    return await this.embeddings.embedDocuments(batch);
+                },
+                (text: string) => text // Token extractor
+            );
+        }
+        
+        // For other providers (like Cohere), use the standard approach
         return await this.embeddings.embedDocuments(texts);
     }
 
     /**
-     * Generate embedding for a single text
+     * Generate embedding for a single text with rate limiting
      */
     async embedText(text: string): Promise<number[]> {
         this.ensureInitialized();
+        
+        if (this.config.provider === 'openai' && this.rateLimitingService) {
+            // For single texts with OpenAI, use the rate-controlled batch method
+            const results = await this.rateLimitingService.executeWithRateLimit(
+                [text],
+                async (batch: string[]) => {
+                    return await this.embeddings.embedDocuments(batch);
+                },
+                (text: string) => text
+            );
+            return results[0];
+        }
+        
         return await this.embeddings.embedQuery(text);
     }
 

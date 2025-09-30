@@ -4,6 +4,7 @@ import { ILLMChunk, IRWSPromptRequestExecutor, IRWSSinglePromptRequestExecutor, 
 import { EmbedLoader as RWSEmbed, IConvoDebugXMLData, IEmbeddingsHandler, ISplitterParams } from './models/convo/EmbedLoader';
 import RWSVectorStore from './models/convo/VectorStore';
 import { LangChainEmbeddingService } from './services/LangChainEmbeddingService';
+import { OpenAIRateLimitingService, IRateLimitConfig } from './services/OpenAIRateLimitingService';
 import { LangChainVectorStoreService, IVectorStoreConfig, IDocumentChunk, IVectorSearchRequest, IVectorSearchResponse, ISearchResult } from './services/LangChainVectorStoreService';
 import { LangChainRAGService, ILangChainRAGConfig, IRAGIndexRequest, IRAGSearchRequest, IRAGResponse, IRAGStats } from './services/LangChainRAGService';
 import { IContextToken } from './types/IContextToken';
@@ -36,11 +37,13 @@ export {
     ToolHandler,
     // New LangChain-based services
     LangChainEmbeddingService,
+    OpenAIRateLimitingService,
     LangChainVectorStoreService, 
     LangChainRAGService,
     // Types
     IEmbeddingConfig,
     IChunkConfig,
+    IRateLimitConfig,
     IVectorStoreConfig,
     IDocumentChunk,
     IVectorSearchRequest,
