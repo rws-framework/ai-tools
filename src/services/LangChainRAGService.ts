@@ -161,7 +161,7 @@ export class LangChainRAGService {
             const knowledgeVectorPromises = knowledgeIds.map(async (knowledgeId) => {
                 const vectorData = await this.loadKnowledgeVectorWithEmbeddings(knowledgeId);
                 return {
-                    knowledgeId,
+                    knowledgeId,                    
                     chunks: vectorData.chunks
                 };
             });
@@ -178,13 +178,14 @@ export class LangChainRAGService {
             
             // Convert results to expected format
             const results: ISearchResult[] = searchResponse.results.map(result => ({
+                knowledgeId: result.metadata.knowledgeId,
                 content: result.content,
                 score: result.score,
                 metadata: result.metadata,
-                chunkId: result.chunkId
+                chunkId: result.chunkId,                
             }));
 
-            this.log('log', `[SEARCH] Found ${results.length} relevant chunks for query: "${request.query}"`);
+            this.log('log', `[SEARCH] Found ${results.length} relevant chunks for query: "${request.query}"\n ${JSON.stringify({ results})}`);
 
             return {
                 success: true,
@@ -334,7 +335,7 @@ export class LangChainRAGService {
     /**
      * Load vector data for a specific knowledge item with embeddings
      */
-    private async loadKnowledgeVectorWithEmbeddings(knowledgeId: string | number): Promise<{ chunks: Array<{ content: string; embedding: number[]; metadata: any }> }> {
+    private async loadKnowledgeVectorWithEmbeddings(knowledgeId: string | number): Promise<{ knowledgeId?: string | number, chunks: Array<{ content: string; embedding: number[]; metadata: any }> }> {
         const vectorFilePath = this.getKnowledgeVectorPath(knowledgeId);
         
         if (!fs.existsSync(vectorFilePath)) {
@@ -347,7 +348,8 @@ export class LangChainRAGService {
             const vectorData = JSON.parse(fs.readFileSync(vectorFilePath, 'utf8'));
             
             return {
-                chunks: vectorData.chunks || []
+                chunks: vectorData.chunks || [],
+                knowledgeId
             };
         } catch (error) {
             this.log('error', `[LOAD] Failed to load vector data for knowledge ${knowledgeId}:`, error);

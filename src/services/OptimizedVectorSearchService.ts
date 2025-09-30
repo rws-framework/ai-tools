@@ -292,7 +292,8 @@ export class OptimizedVectorSearchService {
                 content: result.content,
                 score: result.score,
                 metadata: result.metadata,
-                chunkId: result.chunkId
+                chunkId: result.chunkId,
+                knowledgeId: result.knowledgeId
             }));
 
             return {

@@ -5,6 +5,7 @@ export interface ISearchResult {
     content: string;
     score: number;
     metadata: any;
+    knowledgeId: string | number;
     chunkId: string;
 }
 
@@ -12,8 +13,7 @@ export interface IVectorSearchRequest {
     query: string;
     maxResults?: number;
     similarityThreshold?: number;
-    filter?: {
-        knowledgeIds?: string[];
+    filter?: {        
         documentIds?: string[];
         [key: string]: any;
     };
