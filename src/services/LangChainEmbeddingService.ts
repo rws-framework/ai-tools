@@ -66,7 +66,7 @@ export class LangChainEmbeddingService {
             console.log('Inintialized rate limiting with config:', rateLimitingCfg);
         }     
 
-        console.log(`Initialized ${this.config.provider} embeddings with model ${this.config.model}`, this.config.apiKey);
+        console.log(`Initialized ${this.config.provider} embeddings with model ${this.config.model}`);
     }
 
     private initializeTextSplitter(chunkConfig?: IChunkConfig): void {
