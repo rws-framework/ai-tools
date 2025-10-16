@@ -63,10 +63,7 @@ export class LangChainEmbeddingService {
             const rateLimitingCfg = {...OpenAIRateLimitingService.DEFAULT_CONFIG, ...this.config.rateLimiting};
 
             this.rateLimitingService.initialize(this.config.model || 'text-embedding-3-large', rateLimitingCfg);
-            console.log('Inintialized rate limiting with config:', rateLimitingCfg);
         }     
-
-        console.log(`Initialized ${this.config.provider} embeddings with model ${this.config.model}`);
     }
 
     private initializeTextSplitter(chunkConfig?: IChunkConfig): void {
@@ -126,8 +123,6 @@ export class LangChainEmbeddingService {
         const maxTokens = this.chunkConfig?.chunkSize || 450; // Safe token limit for embedding models
         const overlap = this.chunkConfig?.chunkOverlap || 50; // Character overlap, not token
         
-        console.log('[LCEmbeddingService] Chunking with:', this.chunkConfig);
-
         return TextChunker.chunkText(text, maxTokens, overlap);
     }
 

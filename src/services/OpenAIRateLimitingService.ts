@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import PQueue from 'p-queue';
 import { IBatchMetadata, IRateLimitConfig } from '../types/rag.types';
 import tiktoken from 'tiktoken';
+import { BlackLogger } from '@rws-framework/server/nest';
 
 let encoding_for_model: any = null;
 encoding_for_model = tiktoken.encoding_for_model
@@ -20,6 +21,8 @@ export class OpenAIRateLimitingService {
     private tokenizer: any = null;
     private queue: PQueue;
     private config: Required<IRateLimitConfig>;
+
+    private logger = new BlackLogger(OpenAIRateLimitingService.name);
 
     constructor() {
         this.config = { ...OpenAIRateLimitingService.DEFAULT_CONFIG };
@@ -42,7 +45,7 @@ export class OpenAIRateLimitingService {
                 this.tokenizer = null;
             }
         } catch (e) {
-            console.warn(`Could not load tokenizer for model ${model}, using character-based estimation`);
+            this.logger.warn(`Could not load tokenizer for model ${model}, using character-based estimation`);
             this.tokenizer = null;
         }
 
@@ -96,7 +99,7 @@ export class OpenAIRateLimitingService {
                             // Shrink batch if >1 and retry quickly (binary shrink)
                             if (attemptBatch.length <= 1) throw err;
                             attemptBatch = attemptBatch.slice(0, Math.ceil(attemptBatch.length / 2));
-                            console.log(`Rate limit hit, shrinking batch to ${attemptBatch.length} items`);
+                            this.logger.debug(`Rate limit hit, shrinking batch to ${attemptBatch.length} items`);
                             // Small sleep to avoid immediate retry stampede
                             await this.sleep(200 + Math.random() * 200);
                             continue;
@@ -179,7 +182,7 @@ export class OpenAIRateLimitingService {
             const delay = Math.min(60_000, this.config.baseBackoffMs * (2 ** attempt));
             const jitter = Math.random() * 300;
 
-            console.log(`Retrying request in ${delay + jitter}ms (attempt ${attempt + 1}/${this.config.maxRetries})`);
+            this.logger.warn(`Retrying request in ${delay + jitter}ms (attempt ${attempt + 1}/${this.config.maxRetries})`);
             await this.sleep(delay + jitter);
 
             return this.callWithRetry(fn, attempt + 1);
