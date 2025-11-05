@@ -128,15 +128,18 @@ interface IRWSPromptJSON {
 
 type ChainStreamType = AsyncGenerator<IterableReadableStream<ChainValues>>;
 
-interface CompoundInput {
-    type: InputType,
-    text?: string,
+interface CompoundInputContent{
+  text?: string,    
+  type: InputType,
+  source?: {      
+      media_type: string,
+      data: string
+  }
+}
+
+interface CompoundInput {    
     role?: 'user' | 'assistant' | 'system',
-    source?: {
-        type: string,
-        media_type: string,
-        data: string
-    }
+    content: CompoundInputContent | CompoundInputContent[],
 }
 
 export { 
@@ -161,6 +164,7 @@ export {
     IRWSHistoryMessage,
     InputType,
     CompoundInput,
+    CompoundInputContent,
     IToolCall,
     ToolHandler
 };
