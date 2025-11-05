@@ -36,8 +36,7 @@ export class InputOutputManager {
     readInput(): CompoundInput[] {
         const enchantedInput: CompoundInput[] = this.enhancedInput.map(enchantment => ({ 
             role: enchantment.input.role || 'user', 
-            type: enchantment.input.type, 
-            text: enchantment.input.text 
+            content: enchantment.input.content
         }));
 
         return [...enchantedInput, ...this.input];
@@ -87,7 +86,13 @@ export class InputOutputManager {
         if (callback) {
             callback(messages, prompt);
         } else {
-            this.input = [{ type: 'text', text: prompt }, ...this.input];
+            this.input = [{ 
+                role: 'user', 
+                content: { 
+                    type: 'text', 
+                    text: prompt 
+                } 
+            }, ...this.input];
         }
     }
 
