@@ -141,13 +141,13 @@ export class LangChainRAGService {
      */
     async searchKnowledge(request: IRAGSearchRequest): Promise<IRAGResponse<{ results: ISearchResult[] }>> {
         this.log('log', `[SEARCH] Starting knowledge search for query: "${request.query}"`);
-        this.log('debug', `[SEARCH] Search parameters: maxResults=${request.maxResults || 5}, threshold=${request.threshold || 0.3}`);
+        this.log('debug', `[SEARCH] Search parameters: maxResults=${request.maxResults || 5}, threshold=${request.threshold || 0.3}, temporaryDocumentSearch=${request.temporaryDocumentSearch}`);
 
         try {
             await this.ensureInitialized();
 
             const knowledgeIds = request.filter?.knowledgeIds || [];
-            console.log('knowledgeIds', knowledgeIds);
+            console.log('knowledgeIds', knowledgeIds, 'temporaryDocumentSearch:', request.temporaryDocumentSearch);
             
             if (knowledgeIds.length === 0) {
                 this.log('warn', '[SEARCH] No knowledge IDs provided for search, returning empty results');
@@ -157,16 +157,29 @@ export class LangChainRAGService {
                 };
             }
 
-            // Load all knowledge vectors in parallel
+            // Load all knowledge vectors in parallel (including temporary documents)
             const knowledgeVectorPromises = knowledgeIds.map(async (knowledgeId) => {
-                const vectorData = await this.loadKnowledgeVectorWithEmbeddings(knowledgeId);
-                return {
-                    knowledgeId,                    
-                    chunks: vectorData.chunks
-                };
+                try {
+                    const vectorData = await this.loadKnowledgeVectorWithEmbeddings(knowledgeId);
+                    return {
+                        knowledgeId,                    
+                        chunks: vectorData.chunks
+                    };
+                } catch (loadError) {
+                    this.log('warn', `[SEARCH] Failed to load knowledge ${knowledgeId}:`, loadError);
+                    return null;
+                }
             });
 
-            const knowledgeVectors = await Promise.all(knowledgeVectorPromises);
+            const knowledgeVectors = (await Promise.all(knowledgeVectorPromises)).filter(v => v !== null);
+            
+            if (knowledgeVectors.length === 0) {
+                this.log('warn', '[SEARCH] No knowledge vectors could be loaded for search');
+                return {
+                    success: true,
+                    data: { results: [] }
+                };
+            }
 
             // Use optimized vector search service
             const searchResponse = await this.vectorSearchService.searchSimilar({
@@ -205,25 +218,25 @@ export class LangChainRAGService {
     /**
      * Remove knowledge from index
      */
-    async removeKnowledge(knowledgeId: string | number): Promise<boolean> {
-        this.log('log', `[REMOVE] Starting removal of knowledge: ${knowledgeId}`);
+    async removeKnowledge(fileId: string | number): Promise<boolean> {
+        this.log('log', `[REMOVE] Starting removal of knowledge: ${fileId}`);
 
         try {
             await this.ensureInitialized();
 
             // Remove the individual knowledge vector file
-            const vectorFilePath = this.getKnowledgeVectorPath(knowledgeId);
+            const vectorFilePath = this.getKnowledgeVectorPath(fileId);
             if (fs.existsSync(vectorFilePath)) {
                 fs.unlinkSync(vectorFilePath);
-                this.log('log', `[REMOVE] Successfully removed vector file for knowledge ${knowledgeId}`);
+                this.log('log', `[REMOVE] Successfully removed vector file for knowledge ${fileId}`);
                 return true;
             } else {
-                this.log('warn', `[REMOVE] Vector file not found for knowledge ${knowledgeId}`);
+                this.log('warn', `[REMOVE] Vector file not found for knowledge ${fileId}`);
                 return true; // Consider it successful if file doesn't exist
             }
 
         } catch (error: any) {
-            this.log('error', `[REMOVE] Failed to remove knowledge ${knowledgeId}:`, error);
+            this.log('error', `[REMOVE] Failed to remove knowledge ${fileId}:`, error);
             return false;
         }
     }
