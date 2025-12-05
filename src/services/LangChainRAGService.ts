@@ -85,11 +85,11 @@ export class LangChainRAGService {
      * Index knowledge content for RAG with optimized per-knowledge vector storage
      */
     async indexKnowledge(
-        knowledgeId: string | number,
+        fileId: string | number,
         content: string,
         metadata: Record<string, any> = {}
     ): Promise<IRAGResponse<{ chunkIds: string[] }>> {
-        this.log('log', `[INDEXING] Starting indexKnowledge for knowledgeId: ${knowledgeId}`);
+        this.log('log', `[INDEXING] Starting indexKnowledge for fileId: ${fileId}`);
         this.log('debug', `[INDEXING] Content length: ${content.length} characters`);
 
         try {
@@ -97,7 +97,7 @@ export class LangChainRAGService {
 
             // Chunk the content using the embedding service
             const chunks = await this.embeddingService.chunkText(content);
-            this.log('debug', `[INDEXING] Split content into ${chunks.length} chunks for knowledge ${knowledgeId}`);
+            this.log('debug', `[INDEXING] Split content into ${chunks.length} chunks for file ${fileId}`);
 
             // Generate embeddings for all chunks at once (batch processing for speed)
             const embeddings = await this.embeddingService.embedTexts(chunks);
@@ -109,17 +109,17 @@ export class LangChainRAGService {
                 embedding: embeddings[index],
                 metadata: {
                     ...metadata,
-                    knowledgeId,
+                    fileId,
                     chunkIndex: index,
-                    id: `knowledge_${knowledgeId}_chunk_${index}`
+                    id: `knowledge_${fileId}_chunk_${index}`
                 }
             }));
 
             // Save to per-knowledge vector file
-            await this.saveKnowledgeVector(knowledgeId, chunksWithEmbeddings);
+            await this.saveKnowledgeVector(fileId, chunksWithEmbeddings);
 
             const chunkIds = chunksWithEmbeddings.map(chunk => chunk.metadata.id);
-            this.log('log', `[INDEXING] Successfully indexed knowledge ${knowledgeId} with ${chunkIds.length} chunks using optimized approach`);
+            this.log('log', `[INDEXING] Successfully indexed file ${fileId} with ${chunkIds.length} chunks using optimized approach`);
 
             return {
                 success: true,
@@ -127,7 +127,7 @@ export class LangChainRAGService {
             };
 
         } catch (error: any) {
-            this.log('error', `[INDEXING] Failed to index knowledge ${knowledgeId}:`, error);
+            this.log('error', `[INDEXING] Failed to index file ${fileId}:`, error);
             return {
                 success: false,
                 data: null,
@@ -146,11 +146,11 @@ export class LangChainRAGService {
         try {
             await this.ensureInitialized();
 
-            const knowledgeIds = request.filter?.knowledgeIds || [];
-            console.log('knowledgeIds', knowledgeIds, 'temporaryDocumentSearch:', request.temporaryDocumentSearch);
+            const fileIds = request.filter?.fileIds || [];
+            console.log('fileIds', fileIds, 'temporaryDocumentSearch:', request.temporaryDocumentSearch);
             
-            if (knowledgeIds.length === 0) {
-                this.log('warn', '[SEARCH] No knowledge IDs provided for search, returning empty results');
+            if (fileIds.length === 0) {
+                this.log('warn', '[SEARCH] No file IDs provided for search, returning empty results');
                 return {
                     success: true,
                     data: { results: [] }
@@ -158,15 +158,15 @@ export class LangChainRAGService {
             }
 
             // Load all knowledge vectors in parallel (including temporary documents)
-            const knowledgeVectorPromises = knowledgeIds.map(async (knowledgeId) => {
+            const knowledgeVectorPromises = fileIds.map(async (fileId) => {
                 try {
-                    const vectorData = await this.loadKnowledgeVectorWithEmbeddings(knowledgeId);
+                    const vectorData = await this.loadKnowledgeVectorWithEmbeddings(fileId);
                     return {
-                        knowledgeId,                    
+                        fileId,                    
                         chunks: vectorData.chunks
                     };
                 } catch (loadError) {
-                    this.log('warn', `[SEARCH] Failed to load knowledge ${knowledgeId}:`, loadError);
+                    this.log('warn', `[SEARCH] Failed to load file ${fileId}:`, loadError);
                     return null;
                 }
             });
@@ -191,10 +191,10 @@ export class LangChainRAGService {
             
             // Convert results to expected format
             const results: ISearchResult[] = searchResponse.results.map(result => ({
-                knowledgeId: result.metadata.knowledgeId,
+                fileId: result.metadata?.fileId,  // Use fileId directly
                 content: result.content,
                 score: result.score,
-                metadata: result.metadata,
+                metadata: result.metadata,  // Pass metadata as-is
                 chunkId: result.chunkId,                
             }));
 
@@ -219,7 +219,7 @@ export class LangChainRAGService {
      * Remove knowledge from index
      */
     async removeKnowledge(fileId: string | number): Promise<boolean> {
-        this.log('log', `[REMOVE] Starting removal of knowledge: ${fileId}`);
+        this.log('log', `[REMOVE] Starting removal of file: ${fileId}`);
 
         try {
             await this.ensureInitialized();
@@ -228,15 +228,15 @@ export class LangChainRAGService {
             const vectorFilePath = this.getKnowledgeVectorPath(fileId);
             if (fs.existsSync(vectorFilePath)) {
                 fs.unlinkSync(vectorFilePath);
-                this.log('log', `[REMOVE] Successfully removed vector file for knowledge ${fileId}`);
+                this.log('log', `[REMOVE] Successfully removed vector file for file ${fileId}`);
                 return true;
             } else {
-                this.log('warn', `[REMOVE] Vector file not found for knowledge ${fileId}`);
+                this.log('warn', `[REMOVE] Vector file not found for file ${fileId}`);
                 return true; // Consider it successful if file doesn't exist
             }
 
         } catch (error: any) {
-            this.log('error', `[REMOVE] Failed to remove knowledge ${fileId}:`, error);
+            this.log('error', `[REMOVE] Failed to remove file ${fileId}:`, error);
             return false;
         }
     }
@@ -320,8 +320,8 @@ export class LangChainRAGService {
     /**
      * Save chunks to knowledge-specific vector file with embeddings
      */
-    private async saveKnowledgeVector(knowledgeId: string | number, chunks: Array<{ content: string; embedding: number[]; metadata: any }>): Promise<void> {
-        const vectorFilePath = this.getKnowledgeVectorPath(knowledgeId);
+    private async saveKnowledgeVector(fileId: string | number, chunks: Array<{ content: string; embedding: number[]; metadata: any }>): Promise<void> {
+        const vectorFilePath = this.getKnowledgeVectorPath(fileId);
         const vectorDir = path.dirname(vectorFilePath);
 
         // Ensure directory exists
@@ -331,16 +331,16 @@ export class LangChainRAGService {
 
         try {
             const vectorData = {
-                knowledgeId,
+                fileId,
                 chunks,
                 timestamp: new Date().toISOString()
             };
 
             fs.writeFileSync(vectorFilePath, JSON.stringify(vectorData, null, 2));
-            this.log('debug', `[SAVE] Successfully saved ${chunks.length} chunks with embeddings for knowledge ${knowledgeId}`);
+            this.log('debug', `[SAVE] Successfully saved ${chunks.length} chunks with embeddings for file ${fileId}`);
 
         } catch (error) {
-            this.log('error', `[SAVE] Failed to save vector data for knowledge ${knowledgeId}:`, error);
+            this.log('error', `[SAVE] Failed to save vector data for file ${fileId}:`, error);
             throw error;
         }
     }
@@ -348,24 +348,24 @@ export class LangChainRAGService {
     /**
      * Load vector data for a specific knowledge item with embeddings
      */
-    private async loadKnowledgeVectorWithEmbeddings(knowledgeId: string | number): Promise<{ knowledgeId?: string | number, chunks: Array<{ content: string; embedding: number[]; metadata: any }> }> {
-        const vectorFilePath = this.getKnowledgeVectorPath(knowledgeId);
+    private async loadKnowledgeVectorWithEmbeddings(fileId: string | number): Promise<{ fileId?: string | number, chunks: Array<{ content: string; embedding: number[]; metadata: any }> }> {
+        const vectorFilePath = this.getKnowledgeVectorPath(fileId);
         
         if (!fs.existsSync(vectorFilePath)) {
-            this.log('debug', `[LOAD] No vector file found for knowledge ${knowledgeId}, skipping...`);
+            this.log('debug', `[LOAD] No vector file found for file ${fileId}, skipping...`);
             return { chunks: [] };
         }
 
         try {
-            this.log('debug', `[LOAD] Loading vector data with embeddings for knowledge ${knowledgeId} from ${vectorFilePath}`);
+            this.log('debug', `[LOAD] Loading vector data with embeddings for file ${fileId} from ${vectorFilePath}`);
             const vectorData = JSON.parse(fs.readFileSync(vectorFilePath, 'utf8'));
             
             return {
                 chunks: vectorData.chunks || [],
-                knowledgeId
+                fileId
             };
         } catch (error) {
-            this.log('error', `[LOAD] Failed to load vector data for knowledge ${knowledgeId}:`, error);
+            this.log('error', `[LOAD] Failed to load vector data for file ${fileId}:`, error);
             return { chunks: [] };
         }
     }
@@ -373,12 +373,12 @@ export class LangChainRAGService {
     /**
      * Get the file path for a specific knowledge's vector data
      */
-    private getKnowledgeVectorPath(knowledgeId: string | number): string {
+    private getKnowledgeVectorPath(fileId: string | number): string {
         const vectorDir = path.join(rwsPath.findRootWorkspacePath(), 'files', 'vectors', 'knowledge');
         if (!fs.existsSync(vectorDir)) {
             fs.mkdirSync(vectorDir, { recursive: true });
         }
-        return path.join(vectorDir, `knowledge_${knowledgeId}.json`);
+        return path.join(vectorDir, `knowledge_${fileId}.json`);
     }
 
     /**

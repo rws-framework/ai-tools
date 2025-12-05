@@ -26,7 +26,7 @@ export interface IRAGSearchRequest {
     threshold?: number;
     temporaryDocumentSearch?: boolean; // Flag for searching temporary documents (web search)
     filter?: {
-        knowledgeIds?: (string | number)[];
+        fileIds?: (string | number)[];
         documentIds?: (string | number)[];
         [key: string]: any;
     };

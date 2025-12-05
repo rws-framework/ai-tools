@@ -54,35 +54,42 @@ export class OptimizedVectorSearchService {
                     candidates.push({
                         content: chunk.content,
                         score: similarity,
-                        metadata: chunk.metadata,
-                        knowledgeId: knowledgeVector.knowledgeId,
-                        chunkId: chunk.metadata?.id || `${knowledgeVector.knowledgeId}_chunk_${Date.now()}`
+                        metadata: {
+                            ...chunk.metadata,
+                            fileId: knowledgeVector.fileId  // Use fileId directly
+                        },
+                        fileId: knowledgeVector.fileId,  // Always use the fileId from the knowledgeVector
+                        chunkId: chunk.metadata?.id || `${knowledgeVector.fileId}_chunk_${Date.now()}`
                     });
                 }
             }
+            
+            // Sort candidates by score and take top maxResults per source
+            const topCandidates = candidates
+                .sort((a, b) => b.score - a.score)
+                .slice(0, maxResults);
             
             // Log similarity statistics for debugging
             if (similarities.length > 0) {
                 const maxSim = Math.max(...similarities);
                 const avgSim = similarities.reduce((a, b) => a + b, 0) / similarities.length;
-                console.log(`[VECTOR SEARCH] Knowledge ${knowledgeVector.knowledgeId}: Max similarity: ${maxSim.toFixed(4)}, Avg: ${avgSim.toFixed(4)}, Candidates above ${threshold}: ${candidates.length}`);
+                console.log(`[VECTOR SEARCH] File ${knowledgeVector.fileId}: Max similarity: ${maxSim.toFixed(4)}, Avg: ${avgSim.toFixed(4)}, Candidates above ${threshold}: ${candidates.length}, Top results taken: ${topCandidates.length}`);
             }
             
-            return candidates;
+            return topCandidates;
         });
 
         // Wait for all searches to complete
         const allCandidateArrays = await Promise.all(searchPromises);
         
-        // Flatten results
+        // Flatten results (each source already limited to maxResults)
         for (const candidates of allCandidateArrays) {
             allCandidates.push(...candidates);
         }
 
-        // Sort by similarity score and take top results
+        // Sort by similarity score (no additional limiting since each source is already limited)
         const results = allCandidates
-            .sort((a, b) => b.score - a.score)
-            .slice(0, maxResults);
+            .sort((a, b) => b.score - a.score);
 
         const searchTime = Date.now() - startTime;
 
@@ -122,7 +129,7 @@ export class OptimizedVectorSearchService {
     async batchSearch(
         queries: string[],
         knowledgeVectors: Array<{
-            knowledgeId: string | number;
+            fileId: string | number;
             chunks: Array<{
                 content: string;
                 embedding: number[];
@@ -165,7 +172,7 @@ export class OptimizedVectorSearchService {
     private async searchWithEmbedding(request: {
         queryEmbedding: number[];
         knowledgeVectors: Array<{
-            knowledgeId: string | number;
+            fileId: string | number;
             chunks: Array<{
                 content: string;
                 embedding: number[];
@@ -200,8 +207,8 @@ export class OptimizedVectorSearchService {
                         content: chunk.content,
                         score: similarity,
                         metadata: chunk.metadata,
-                        knowledgeId: knowledgeVector.knowledgeId,
-                        chunkId: chunk.metadata?.id || `${knowledgeVector.knowledgeId}_chunk_${Date.now()}`
+                        fileId: knowledgeVector.fileId,
+                        chunkId: chunk.metadata?.id || `${knowledgeVector.fileId}_chunk_${Date.now()}`
                     });
                 }
             }
@@ -252,7 +259,7 @@ export class OptimizedVectorSearchService {
      * Search similar documents (compatibility method from LangChainVectorStoreService)
      */
     async searchSimilarCompat(request: IVectorSearchRequest, knowledgeVectors: Array<{
-        knowledgeId: string | number;
+        fileId: string | number;
         chunks: Array<{
             content: string;
             embedding: number[];
@@ -271,9 +278,9 @@ export class OptimizedVectorSearchService {
             let filteredVectors = knowledgeVectors;
             if (filter) {
                 filteredVectors = knowledgeVectors.filter(vector => {
-                    // Check knowledge IDs
-                    if (filter.knowledgeIds && filter.knowledgeIds.length > 0) {
-                        return filter.knowledgeIds.includes(String(vector.knowledgeId));
+                    // Check file IDs
+                    if (filter.fileIds && filter.fileIds.length > 0) {
+                        return filter.fileIds.includes(String(vector.fileId));
                     }
                     return true;
                 });
@@ -293,7 +300,7 @@ export class OptimizedVectorSearchService {
                 score: result.score,
                 metadata: result.metadata,
                 chunkId: result.chunkId,
-                knowledgeId: result.knowledgeId
+                fileId: result.fileId
             }));
 
             return {
@@ -313,7 +320,7 @@ export class OptimizedVectorSearchService {
      * Get search statistics
      */
     getStats(knowledgeVectors: Array<{
-        knowledgeId: string | number;
+        fileId: string | number;
         chunks: Array<{ content: string; embedding: number[]; metadata: any; }>;
     }>): { totalChunks: number; totalKnowledge: number } {
         const totalChunks = knowledgeVectors.reduce((total, vector) => total + vector.chunks.length, 0);

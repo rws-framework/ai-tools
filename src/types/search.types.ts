@@ -5,7 +5,7 @@ export interface ISearchResult {
     content: string;
     score: number;
     metadata: any;
-    knowledgeId: string | number;
+    fileId: string | number;
     chunkId: string;
 }
 
@@ -30,7 +30,7 @@ export interface IVectorSearchResponse {
 export interface IOptimizedSearchRequest {
     query: string;
     knowledgeVectors: Array<{
-        knowledgeId: string | number;
+        fileId: string | number;
         chunks: Array<{
             content: string;
             embedding: number[];
@@ -45,7 +45,7 @@ export interface IOptimizedSearchResult {
     content: string;
     score: number;
     metadata: any;
-    knowledgeId: string | number;
+    fileId: string | number;
     chunkId: string;
 }
 
