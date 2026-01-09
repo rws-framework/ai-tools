@@ -15,6 +15,7 @@ export class LangChainEmbeddingService {
     private chunkConfig: IChunkConfig;
     private isInitialized = false;
     private vectorStore: RWSVectorStore | null = null;
+    private static embeddingsPool = new Map<string, Embeddings>(); // Connection pooling
 
     constructor(private rateLimitingService: OpenAIRateLimitingService) {}
 
@@ -37,6 +38,14 @@ export class LangChainEmbeddingService {
 
 
     private initializeEmbeddings(): void {
+        const poolKey = `${this.config.provider}_${this.config.model}_${this.config.apiKey.slice(-8)}`;
+        
+        // Check connection pool first
+        if (LangChainEmbeddingService.embeddingsPool.has(poolKey)) {
+            this.embeddings = LangChainEmbeddingService.embeddingsPool.get(poolKey)!;
+            return;
+        }
+        
         switch (this.config.provider) {
             case 'cohere':
                 this.embeddings = new CohereEmbeddings({
@@ -58,6 +67,9 @@ export class LangChainEmbeddingService {
             default:
                 throw new Error(`Unsupported embedding provider: ${this.config.provider}`);
         }
+        
+        // Store in connection pool for reuse
+        LangChainEmbeddingService.embeddingsPool.set(poolKey, this.embeddings);
 
         if(this.config.rateLimiting){
             const rateLimitingCfg = {...OpenAIRateLimitingService.DEFAULT_CONFIG, ...this.config.rateLimiting};

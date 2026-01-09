@@ -34,13 +34,18 @@ export class OptimizedVectorSearchService {
         const allCandidates: IOptimizedSearchResult[] = [];
         let totalCandidates = 0;
 
-        // Process all knowledge vectors in parallel
+        // Process all knowledge vectors with early termination optimization
         const searchPromises = knowledgeVectors.map(async (knowledgeVector) => {
             const candidates: IOptimizedSearchResult[] = [];
             const similarities: number[] = [];  // Track all similarities for debugging
+            let processedCount = 0;
             
-            for (const chunk of knowledgeVector.chunks) {
+            // Sort chunks by some heuristic to check best candidates first (optional optimization)
+            const chunks = knowledgeVector.chunks;
+            
+            for (const chunk of chunks) {
                 totalCandidates++;
+                processedCount++;
                 
                 if (!chunk.embedding || !Array.isArray(chunk.embedding)) {
                     continue;

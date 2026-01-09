@@ -22,9 +22,17 @@ export class ExecutionMethodsHandler {
         debugVars: any = {}, 
         tools?: IAITool[]
     ): Promise<void> {
-        promptInstance.setSentInput(promptInstance.getInput());
+        // Create snapshot of current input to prevent race conditions
+        const inputSnapshot = [...promptInstance.getInput()];
+        promptInstance.setSentInput(inputSnapshot);
+        
         const returnedRWS = await executor.promptRequest(promptInstance as any, { intruderPrompt, debugVars, tools });
-        promptInstance.injestOutput(returnedRWS.readOutput());
+        
+        // Safely ingest output
+        const output = returnedRWS.readOutput();
+        if (output !== null && output !== undefined) {
+            promptInstance.injestOutput(output);
+        }
     }
 
     async singleRequestWith(
@@ -34,8 +42,13 @@ export class ExecutionMethodsHandler {
         ensureJson: boolean = false, 
         tools?: IAITool[]
     ): Promise<void> {
+        // Create snapshot of current input to prevent race conditions
+        const inputSnapshot = [...promptInstance.getInput()];
+        
         await executor.singlePromptRequest(promptInstance as any, { intruderPrompt, ensureJson, tools });
-        promptInstance.setSentInput(promptInstance.getInput());
+        
+        // Set the snapshot after execution to maintain consistency
+        promptInstance.setSentInput(inputSnapshot);
     }
 
     async streamWith(

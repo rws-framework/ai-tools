@@ -34,13 +34,28 @@ export class ToolManager {
 
     async callTools<T = unknown, O = unknown>(tools: IToolCall[], moduleRef: ModuleRef, aiToolOptions?: O): Promise<T[]> {
         const results: T[] = [];
+        const errors: Error[] = [];
+        
         for (const tool of tools) {
             if (this.toolHandlers.has(tool.function.name)) {
-                const result = await this.callAiTool<T, O>(tool, moduleRef, aiToolOptions);
-                if (result) {
-                    results.push(result);
+                try {
+                    const result = await this.callAiTool<T, O>(tool, moduleRef, aiToolOptions);
+                    if (result) {
+                        results.push(result);
+                    }
+                } catch (error) {
+                    console.error(`Tool execution failed for ${tool.function.name}:`, error);
+                    errors.push(error as Error);
+                    // Continue with other tools instead of failing completely
                 }
+            } else {
+                console.warn(`No handler found for tool: ${tool.function.name}`);
             }
+        }
+        
+        // If all tools failed, throw the first error
+        if (results.length === 0 && errors.length > 0) {
+            throw errors[0];
         }
 
         return results;

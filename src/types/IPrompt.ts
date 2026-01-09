@@ -53,8 +53,7 @@ interface IAITool {
 
 interface IPromptHyperParameters {
     temperature: number,
-    top_k?: number,
-    top_p?: number,
+    max_tokens: number,
     [key: string]: number
 }
 

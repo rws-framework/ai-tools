@@ -7,6 +7,27 @@ import { BlackLogger } from '@rws-framework/server/nest';
 let encoding_for_model: any = null;
 encoding_for_model = tiktoken.encoding_for_model
 
+// Singleton tokenizer factory for performance
+class TokenizerFactory {
+    private static tokenizers = new Map<string, any>();
+    
+    static getTokenizer(model: string): any {
+        if (!this.tokenizers.has(model)) {
+            try {
+                if (encoding_for_model) {
+                    this.tokenizers.set(model, encoding_for_model(model));
+                } else {
+                    this.tokenizers.set(model, null);
+                }
+            } catch (e) {
+                console.warn(`Could not load tokenizer for model ${model}`);
+                this.tokenizers.set(model, null);
+            }
+        }
+        return this.tokenizers.get(model);
+    }
+}
+
 @Injectable()
 export class OpenAIRateLimitingService {
     static readonly DEFAULT_CONFIG: Required<IRateLimitConfig> = {
@@ -37,16 +58,10 @@ export class OpenAIRateLimitingService {
             this.config = { ...this.config, ...config };
         }
 
-        // Initialize tokenizer for precise token counting
-        try {
-            if (encoding_for_model) {
-                this.tokenizer = encoding_for_model(model);
-            } else {
-                this.tokenizer = null;
-            }
-        } catch (e) {
+        // Use singleton tokenizer factory for performance
+        this.tokenizer = TokenizerFactory.getTokenizer(model);
+        if (!this.tokenizer) {
             this.logger.warn(`Could not load tokenizer for model ${model}, using character-based estimation`);
-            this.tokenizer = null;
         }
 
         // Reinitialize queue with new concurrency

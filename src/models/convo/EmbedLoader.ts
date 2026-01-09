@@ -187,12 +187,15 @@ class EmbedLoader<LLMChat extends BaseChatModel> {
             logConvo(`After the split we have ${splitDocs.length} documents more than the original ${orgDocs.length}.`);
             logConvo(`Average length among ${splitDocs.length} documents (after split) is ${avgCharCountPost} characters.`);
 
-            let i = 0;
-            splitDocs.forEach((doc: Document) => {
+            // Write files asynchronously to prevent blocking
+            await Promise.all(splitDocs.map(async (doc: Document, i: number) => {
                 finalDocs.push(doc);
-                fs.writeFileSync(this.debugSplitFile(i), doc.pageContent);
-                i++;
-            });
+                try {
+                    await fs.promises.writeFile(this.debugSplitFile(i), doc.pageContent, 'utf-8');
+                } catch (error) {
+                    console.warn(`Failed to write debug file ${i}:`, error);
+                }
+            }));
         }else{
             const splitFiles = fs.readdirSync(splitDir);
             

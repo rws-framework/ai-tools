@@ -41,8 +41,6 @@ export {
 export class LangChainRAGService {
     private config: ILangChainRAGConfig;
     private isInitialized = false;
-    private queryEmbeddingCache = new Map<string, number[]>();
-    private maxCacheSize = 100;
     private logger?: any; // Optional logger interface
 
     constructor(

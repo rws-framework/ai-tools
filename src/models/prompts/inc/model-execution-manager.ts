@@ -22,7 +22,7 @@ export class ModelExecutionManager {
     constructor(modelId: string, modelType: string, hyperParameters: IPromptHyperParameters) {
         this.modelId = modelId;
         this.modelType = modelType;
-        this.hyperParameters = hyperParameters;
+        this.hyperParameters = hyperParameters || { temperature: 0.7, max_tokens: 512 };
     }
 
     getModelId(): string {

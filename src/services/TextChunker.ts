@@ -197,8 +197,9 @@ export class TextChunker {
         for (let i = 0; i < chunks.length; i++) {
             const chunk = chunks[i];
             
-            // Check if we can merge this chunk with current chunk
-            const combined = currentChunk ? currentChunk + ' ' + chunk : chunk;
+            // Use array for efficient string building
+            const parts = currentChunk ? [currentChunk, chunk] : [chunk];
+            const combined = parts.join(' ');
             
             if (combined.length <= maxChars) {
                 // Can merge
