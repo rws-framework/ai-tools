@@ -5,6 +5,16 @@ export class ToolManager {
     private toolHandlers: Map<string, ToolHandler> = new Map();
     private tools: IAITool[] = [];
 
+    clearTools(): void {
+        this.tools = [];
+        this.toolHandlers.clear();
+    }
+
+     clearTool(toolName: string): void {
+        this.tools = this.tools.filter(tool => tool.name !== toolName);
+        this.toolHandlers.delete(toolName);
+    }
+
     setTools(tools: IAITool[]): void {
         this.tools = tools;
     }

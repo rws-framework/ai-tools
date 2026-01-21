@@ -64,6 +64,14 @@ class RWSPrompt implements IPromptInstance {
         this.toolManager.registerToolHandlers(toolHandlers);
     }
 
+    clearTools(): void {
+        this.toolManager.clearTools();
+    }
+
+    clearTool(toolName: string): void {
+        this.toolManager.clearTool(toolName);
+    }
+
     async callTools<T = unknown, O = unknown>(tools: IToolCall[], moduleRef: ModuleRef, aiToolOptions?: O): Promise<T[]> {
         return this.toolManager.callTools<T, O>(tools, moduleRef, aiToolOptions);
     }

@@ -335,7 +335,7 @@ export class LangChainRAGService {
             };
 
             fs.writeFileSync(vectorFilePath, JSON.stringify(vectorData, null, 2));
-            this.log('debug', `[SAVE] Successfully saved ${chunks.length} chunks with embeddings for file ${fileId}`);
+            this.log('debug', `[SAVE] Successfully saved ${chunks.length} chunks with embeddings for file ${fileId} to: "${vectorFilePath}"`);
 
         } catch (error) {
             this.log('error', `[SAVE] Failed to save vector data for file ${fileId}:`, error);

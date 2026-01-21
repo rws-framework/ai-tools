@@ -49,6 +49,7 @@ interface IAITool {
   name: string;
   description: string;
   input_schema?: IAIToolSchema;
+  transparent?: boolean;
 }
 
 interface IPromptHyperParameters {
