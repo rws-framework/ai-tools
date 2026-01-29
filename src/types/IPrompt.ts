@@ -4,6 +4,7 @@ import { ChainValues } from '@langchain/core/utils/types';
 import { IContextToken } from './IContextToken';
 import { BaseChatModel } from '@langchain/core/language_models/chat_models';
 import z4, { Schema } from 'zod/v4';
+import { z } from 'zod'; // Import regular zod for zodSchema
 
 // General tool interfaces for AI models
 interface IAIToolParameterBase {
@@ -49,7 +50,8 @@ interface IAITool {
   name: string;
   description: string;
   input_schema?: IAIToolSchema;
-  transparent?: boolean;
+  zodSchema?: z.ZodTypeAny; // Support for regular Zod schemas
+  blockStream?: boolean;
 }
 
 interface IPromptHyperParameters {
