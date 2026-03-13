@@ -85,7 +85,8 @@ export class LangChainRAGService {
     async indexKnowledge(
         fileId: string | number,
         content: string,
-        metadata: Record<string, any> = {}
+        metadata: Record<string, any> = {},
+        ragOverride?: IChunkConfig
     ): Promise<IRAGResponse<{ chunkIds: string[] }>> {
         this.log('log', `[INDEXING] Starting indexKnowledge for fileId: ${fileId}`);
         this.log('debug', `[INDEXING] Content length: ${content.length} characters`);
@@ -94,7 +95,7 @@ export class LangChainRAGService {
             await this.ensureInitialized();
 
             // Chunk the content using the embedding service
-            const chunks = await this.embeddingService.chunkText(content);
+            const chunks = await this.embeddingService.chunkText(content, ragOverride);
             this.log('debug', `[INDEXING] Split content into ${chunks.length} chunks for file ${fileId}`);
 
             // Generate embeddings for all chunks at once (batch processing for speed)

@@ -127,15 +127,15 @@ export class LangChainEmbeddingService {
     /**
      * Split text into chunks
      */
-    async chunkText(text: string): Promise<string[]> {
+    async chunkText(text: string, ragOverride?: IChunkConfig): Promise<string[]> {
         this.ensureInitialized();
         
         // Use our custom TextChunker instead of LangChain's splitter
         // Use safe token limits - the TextChunker handles token estimation internally
-        const maxTokens = this.chunkConfig?.chunkSize || 450; // Safe token limit for embedding models
-        const overlap = this.chunkConfig?.chunkOverlap || 50; // Character overlap, not token
-        
-        return TextChunker.chunkText(text, maxTokens, overlap);
+        const maxTokens = ragOverride ? ragOverride.chunkSize : (this.chunkConfig?.chunkSize || 450); // Safe token limit for embedding models
+        const overlap = ragOverride ? ragOverride.chunkOverlap : (this.chunkConfig?.chunkOverlap || 50); // Character overlap, not token
+        const separators = ragOverride?.separators || this.chunkConfig?.separators || TextChunker.DEFAULT_SEPARATORS; // Default separators
+        return TextChunker.chunkText(text, maxTokens, overlap, separators);
     }
 
     /**
