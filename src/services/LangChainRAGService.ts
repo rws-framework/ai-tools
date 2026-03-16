@@ -98,7 +98,7 @@ export class LangChainRAGService {
         fileId: string | number,
         content: string | Record<string, any>[],
         metadata: Record<string, any> = {},
-        batchCallback?: (fragments:string[], batch: number[][]) => Promise<void>,
+        batchCallback?: (fragments:string[], batch: number[][], percentage: number) => Promise<void>,
         ragOverride?: IChunkConfig
     ): Promise<IRAGResponse<{ chunkCount: number }>> {
         this.log('log', `[INDEXING] Starting indexKnowledge for fileId: ${fileId}`);

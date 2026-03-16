@@ -83,7 +83,7 @@ export class LangChainEmbeddingService {
         // This method is kept for compatibility but doesn't initialize anything
     }
 
-     async embedDocs(docs: Document[], batchCallback?: (fragments:string[], batch: number[][]) => Promise<void>): Promise<number[][]> {
+     async embedDocs(docs: Document[], batchCallback?: (fragments:string[], batch: number[][], percentage: number) => Promise<void>): Promise<number[][]> {
         this.ensureInitialized();
         
         if (this.config.rateLimiting) {
@@ -94,7 +94,8 @@ export class LangChainEmbeddingService {
 
                     if(batchCallback){
                         const fragments = batch.map(d => d.pageContent);
-                        await batchCallback(fragments, embeddings);
+                        const percentage = (batch.length / docs.length) * 100;
+                        await batchCallback(fragments, embeddings, percentage);
                     }
 
                     return embeddings;
@@ -106,7 +107,7 @@ export class LangChainEmbeddingService {
         return await this.embeddings.embedDocuments(docs.map(d => d.pageContent));
     }
 
-    async embedTexts(texts: string[], batchCallback?: (fragments:string[], batch: number[][]) => Promise<void>): Promise<number[][]> {
+    async embedTexts(texts: string[], batchCallback?: (fragments:string[], batch: number[][], percentage: number) => Promise<void>): Promise<number[][]> {
         this.ensureInitialized();
         
         if (this.config.rateLimiting) {
@@ -115,7 +116,8 @@ export class LangChainEmbeddingService {
                 async (batch: string[]) => {
                     const embeddings = await this.embeddings.embedDocuments(batch);
                     if (batchCallback) {
-                        await batchCallback(batch, embeddings);
+                        const percentage = (batch.length / texts.length) * 100;
+                        await batchCallback(batch, embeddings, percentage);
                     }
                     return embeddings;
                 },
