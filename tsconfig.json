@@ -14,11 +14,14 @@
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
     "declaration": true, 
+    "types": []
   },
   "include": [
     "src"
   ],
   "exclude": [  
-    "node_modules"  
+    "node_modules",
+    "**/*.d.ts",
+    "**/node_modules/**",
   ]
 }

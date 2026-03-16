@@ -95,6 +95,7 @@ export class OpenAIRateLimitingService {
         }
 
         const results = new Array(items.length);
+        let doneItems = 0;
 
         // Process all batches with queue concurrency control
         await Promise.all(batchStarts.map(meta =>
@@ -104,9 +105,14 @@ export class OpenAIRateLimitingService {
                 for (let attempt = 0; attempt < 6; attempt++) {
                     try {
                         const batchResults = await this.callWithRetry(() => executor(attemptBatch));
+
                         for (let i = 0; i < batchResults.length; i++) {
                             results[meta.start + i] = batchResults[i];
+                            doneItems++;
                         }
+
+                        this.logger.debug(`Embedding chunks done [${doneItems}/${items.length}]`);
+
                         break;
                     } catch (err: any) {
                         const status = err?.status || err?.response?.status;

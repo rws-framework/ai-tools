@@ -108,7 +108,7 @@ export class OptimizedVectorSearchService {
     /**
      * Get query embedding with caching
      */
-    private async getQueryEmbedding(query: string): Promise<number[]> {
+    async getQueryEmbedding(query: string): Promise<number[]> {
         // Check cache first
         if (this.queryEmbeddingCache.has(query)) {
             return this.queryEmbeddingCache.get(query)!;

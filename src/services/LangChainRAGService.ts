@@ -43,6 +43,18 @@ export class LangChainRAGService {
     private isInitialized = false;
     private logger?: any; // Optional logger interface
 
+    static SheetMimeType: string[] = [
+        'text/csv',
+        'text/tab-separated-values',
+        'application/vnd.ms-excel',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.template',
+        'application/vnd.ms-excel.sheet.macroEnabled.12',
+        'application/vnd.ms-excel.sheet.binary.macroEnabled.12',
+        'application/vnd.oasis.opendocument.spreadsheet',
+        'application/vnd.google-apps.spreadsheet',
+    ];
+
     constructor(
         private embeddingService: LangChainEmbeddingService,
         private vectorSearchService: OptimizedVectorSearchService
@@ -84,45 +96,57 @@ export class LangChainRAGService {
      */
     async indexKnowledge(
         fileId: string | number,
-        content: string,
+        content: string | Record<string, any>[],
         metadata: Record<string, any> = {},
+        batchCallback?: (fragments:string[], batch: number[][]) => Promise<void>,
         ragOverride?: IChunkConfig
-    ): Promise<IRAGResponse<{ chunkIds: string[] }>> {
+    ): Promise<IRAGResponse<{ chunkCount: number }>> {
         this.log('log', `[INDEXING] Starting indexKnowledge for fileId: ${fileId}`);
-        this.log('debug', `[INDEXING] Content length: ${content.length} characters`);
+        this.log('debug', `[INDEXING] Content length: ${Array.isArray(content) ? content.map(r => Object.values(r).join(' ')).join('\n').length : content.length} characters`);
 
         try {
             await this.ensureInitialized();
 
-            // Chunk the content using the embedding service
-            const chunks = await this.embeddingService.chunkText(content, ragOverride);
-            this.log('debug', `[INDEXING] Split content into ${chunks.length} chunks for file ${fileId}`);
+            const mime = metadata.mime || null;
 
-            // Generate embeddings for all chunks at once (batch processing for speed)
-            const embeddings = await this.embeddingService.embedTexts(chunks);
-            this.log('debug', `[INDEXING] Generated embeddings for ${chunks.length} chunks`);
+            let chunkTexts: string[] = undefined;
+            let embeddings: number[][] = undefined;
 
-            // Create chunk objects with embeddings
-            const chunksWithEmbeddings = chunks.map((chunkContent, index) => ({
-                content: chunkContent,
-                embedding: embeddings[index],
-                metadata: {
-                    ...metadata,
-                    fileId,
-                    chunkIndex: index,
-                    id: `knowledge_${fileId}_chunk_${index}`
-                }
-            }));
+            if(mime && LangChainRAGService.isSheetDocument(mime)) {       
+                this.log('debug', `[INDEXING] SHEET extraction mode detected.`);
+         
+                const docs = await this.embeddingService.chunkCSV(content as Record<string, any>[], ragOverride);
+                embeddings = await this.embeddingService.embedDocs(docs, batchCallback);
+                chunkTexts = docs.map(d => d.pageContent);
+            }else{                
+                chunkTexts = await this.embeddingService.chunkText(content as string, ragOverride);
+                embeddings = await this.embeddingService.embedTexts(chunkTexts, batchCallback);
+            }
+            
+            this.log('debug', `[INDEXING] Generated embeddings for ${chunkTexts.length} chunks`);
 
-            // Save to per-knowledge vector file
-            await this.saveKnowledgeVector(fileId, chunksWithEmbeddings);
+       
 
-            const chunkIds = chunksWithEmbeddings.map(chunk => chunk.metadata.id);
-            this.log('log', `[INDEXING] Successfully indexed file ${fileId} with ${chunkIds.length} chunks using optimized approach`);
+            if(!batchCallback){
+                // Create chunk objects with embeddings
+                const chunksWithEmbeddings = chunkTexts.map((chunkContent, index) => ({
+                    content: chunkContent,
+                    embedding: embeddings[index],
+                    metadata: {
+                        ...metadata,
+                        fileId,
+                        chunkIndex: index,
+                        id: `knowledge_${fileId}_chunk_${index}`
+                    }
+                }));
+                await this.saveKnowledgeVector(fileId, chunksWithEmbeddings);
+            }            
+
+            this.log('log', `[INDEXING] Successfully indexed file ${fileId} with ${chunkTexts.length} chunks using optimized approach`);
 
             return {
                 success: true,
-                data: { chunkIds }
+                data: { chunkCount: chunkTexts.length }
             };
 
         } catch (error: any) {
@@ -133,6 +157,10 @@ export class LangChainRAGService {
                 error: error.message || 'Unknown error'
             };
         }
+    }
+
+    static isSheetDocument(mime: string): boolean {
+        return LangChainRAGService.SheetMimeType.includes(mime);
     }
 
     /**
@@ -240,6 +268,10 @@ export class LangChainRAGService {
         }
     }
 
+    embedQuery(query: string): Promise<number[]> {
+        return this.vectorSearchService.getQueryEmbedding(query);
+    }
+
     /**
      * Get statistics about the RAG system
      */
@@ -318,6 +350,7 @@ export class LangChainRAGService {
 
     /**
      * Save chunks to knowledge-specific vector file with embeddings
+     * Uses streaming JSON write to handle large embedding datasets
      */
     private async saveKnowledgeVector(fileId: string | number, chunks: Array<{ content: string; embedding: number[]; metadata: any }>): Promise<void> {
         const vectorFilePath = this.getKnowledgeVectorPath(fileId);
@@ -329,13 +362,24 @@ export class LangChainRAGService {
         }
 
         try {
-            const vectorData = {
-                fileId,
-                chunks,
-                timestamp: new Date().toISOString()
-            };
-
-            fs.writeFileSync(vectorFilePath, JSON.stringify(vectorData, null, 2));
+            // Stream JSON to avoid "Invalid string length" on large datasets
+            const writeStream = fs.createWriteStream(vectorFilePath);
+            
+            await new Promise<void>((resolve, reject) => {
+                writeStream.on('error', reject);
+                writeStream.on('finish', resolve);
+                
+                writeStream.write(`{"fileId":${JSON.stringify(fileId)},"timestamp":${JSON.stringify(new Date().toISOString())},"chunks":[`);
+                
+                for (let i = 0; i < chunks.length; i++) {
+                    if (i > 0) writeStream.write(',');
+                    writeStream.write(JSON.stringify(chunks[i]));
+                }
+                
+                writeStream.write(']}');
+                writeStream.end();
+            });
+            
             this.log('debug', `[SAVE] Successfully saved ${chunks.length} chunks with embeddings for file ${fileId} to: "${vectorFilePath}"`);
 
         } catch (error) {

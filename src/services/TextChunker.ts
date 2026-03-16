@@ -16,7 +16,7 @@ export class TextChunker {
      * Default separators following LangChain RecursiveCharacterTextSplitter approach
      * Ordered by preference for breaking text
      */
-    private static readonly DEFAULT_SEPARATORS = [
+    static readonly DEFAULT_SEPARATORS = [
         '\n\n',  // Double newlines (paragraphs)
         '\n',    // Single newlines
         '. ',    // Sentence endings

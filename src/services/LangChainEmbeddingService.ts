@@ -7,7 +7,7 @@ import { IEmbeddingConfig, IChunkConfig } from '../types';
 import { TextChunker } from './TextChunker';
 import RWSVectorStore, { VectorDocType, IVectorStoreConfig } from '../models/convo/VectorStore';
 import { OpenAIRateLimitingService } from './OpenAIRateLimitingService';
-
+import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 @Injectable()
 export class LangChainEmbeddingService {
     private embeddings: Embeddings;
@@ -83,17 +83,41 @@ export class LangChainEmbeddingService {
         // This method is kept for compatibility but doesn't initialize anything
     }
 
-        /**
-     * Generate embeddings for multiple texts with sophisticated rate limiting
-     */
-    async embedTexts(texts: string[]): Promise<number[][]> {
+     async embedDocs(docs: Document[], batchCallback?: (fragments:string[], batch: number[][]) => Promise<void>): Promise<number[][]> {
+        this.ensureInitialized();
+        
+        if (this.config.rateLimiting) {
+            return await this.rateLimitingService.executeWithRateLimit(
+                docs,
+                async (batch: Document[]) => {
+                    const embeddings = await this.embeddings.embedDocuments(batch.map(d => d.pageContent));
+
+                    if(batchCallback){
+                        const fragments = batch.map(d => d.pageContent);
+                        await batchCallback(fragments, embeddings);
+                    }
+
+                    return embeddings;
+                },
+                (doc: Document) => doc.pageContent
+            );
+        }
+        
+        return await this.embeddings.embedDocuments(docs.map(d => d.pageContent));
+    }
+
+    async embedTexts(texts: string[], batchCallback?: (fragments:string[], batch: number[][]) => Promise<void>): Promise<number[][]> {
         this.ensureInitialized();
         
         if (this.config.rateLimiting) {
             return await this.rateLimitingService.executeWithRateLimit(
                 texts,
                 async (batch: string[]) => {
-                    return await this.embeddings.embedDocuments(batch);
+                    const embeddings = await this.embeddings.embedDocuments(batch);
+                    if (batchCallback) {
+                        await batchCallback(batch, embeddings);
+                    }
+                    return embeddings;
                 },
                 (text: string) => text // Token extractor
             );
@@ -135,7 +159,32 @@ export class LangChainEmbeddingService {
         const maxTokens = ragOverride ? ragOverride.chunkSize : (this.chunkConfig?.chunkSize || 450); // Safe token limit for embedding models
         const overlap = ragOverride ? ragOverride.chunkOverlap : (this.chunkConfig?.chunkOverlap || 50); // Character overlap, not token
         const separators = ragOverride?.separators || this.chunkConfig?.separators || TextChunker.DEFAULT_SEPARATORS; // Default separators
+        
         return TextChunker.chunkText(text, maxTokens, overlap, separators);
+    }
+
+    async chunkCSV(rows: Record<string, any>[], ragOverride?: IChunkConfig): Promise<Document[]> {        
+            // Use safe token limits - the TextChunker handles token estimation internally
+        const maxTokens = ragOverride ? ragOverride.chunkSize : (this.chunkConfig?.chunkSize || 450); // Safe token limit for embedding models
+        const overlap = ragOverride ? ragOverride.chunkOverlap : (this.chunkConfig?.chunkOverlap || 50); // Character overlap, not token
+
+        const splitter = new RecursiveCharacterTextSplitter({
+            chunkSize: maxTokens,
+            chunkOverlap: overlap
+        });       
+
+        const docs = rows.map((row, i) => {
+            const text = Object.entries(row)
+            .map(([k, v]) => `${k}: ${v}`)
+            .join("\n");
+
+            return new Document({
+                pageContent: text,
+                metadata: { row: i }
+            });
+        });
+
+        return await splitter.splitDocuments(docs);
     }
 
     /**
@@ -205,6 +254,7 @@ export class LangChainEmbeddingService {
 
         return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
     }
+    
 
     /**
      * Ensure the service is initialized
