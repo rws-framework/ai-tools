@@ -87,14 +87,16 @@ export class LangChainEmbeddingService {
         this.ensureInitialized();
         
         if (this.config.rateLimiting) {
+            let doneFiles = 0;
             return await this.rateLimitingService.executeWithRateLimit(
                 docs,
                 async (batch: Document[]) => {
                     const embeddings = await this.embeddings.embedDocuments(batch.map(d => d.pageContent));
 
                     if(batchCallback){
-                        const fragments = batch.map(d => d.pageContent);
-                        const percentage = (batch.length / docs.length) * 100;
+                        const fragments = batch.map(d => d.pageContent);                        
+                        doneFiles += batch.length;
+                        const percentage = (doneFiles / docs.length) * 100;
                         await batchCallback(fragments, embeddings, percentage);
                     }
 
@@ -109,14 +111,15 @@ export class LangChainEmbeddingService {
 
     async embedTexts(texts: string[], batchCallback?: (fragments:string[], batch: number[][], percentage: number) => Promise<void>): Promise<number[][]> {
         this.ensureInitialized();
-        
+        let doneTexts = 0;
         if (this.config.rateLimiting) {
             return await this.rateLimitingService.executeWithRateLimit(
                 texts,
                 async (batch: string[]) => {
                     const embeddings = await this.embeddings.embedDocuments(batch);
                     if (batchCallback) {
-                        const percentage = (batch.length / texts.length) * 100;
+                        doneTexts += batch.length;
+                        const percentage = (doneTexts / texts.length) * 100;
                         await batchCallback(batch, embeddings, percentage);
                     }
                     return embeddings;
