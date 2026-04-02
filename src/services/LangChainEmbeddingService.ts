@@ -168,16 +168,7 @@ export class LangChainEmbeddingService {
         return TextChunker.chunkText(text, maxTokens, overlap, separators);
     }
 
-    async chunkCSV(rows: Record<string, any>[], ragOverride?: IChunkConfig): Promise<Document[]> {        
-            // Use safe token limits - the TextChunker handles token estimation internally
-        const maxTokens = ragOverride ? ragOverride.chunkSize : (this.chunkConfig?.chunkSize || 450); // Safe token limit for embedding models
-        const overlap = ragOverride ? ragOverride.chunkOverlap : (this.chunkConfig?.chunkOverlap || 50); // Character overlap, not token
-
-        const splitter = new RecursiveCharacterTextSplitter({
-            chunkSize: maxTokens,
-            chunkOverlap: overlap
-        });       
-
+    async chunkCSV(rows: Record<string, any>[], ragOverride?: IChunkConfig): Promise<Document[]> {                                 
         const docs = rows.map((row, i) => {
             const text = Object.entries(row)
             .map(([k, v]) => `${k}: ${v}`)
@@ -189,7 +180,7 @@ export class LangChainEmbeddingService {
             });
         });
 
-        return await splitter.splitDocuments(docs);
+        return docs;
     }
 
     /**
