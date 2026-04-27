@@ -13,8 +13,12 @@ export class InputOutputManager {
         this.originalInput = input;
     }
 
-    addInput(content: CompoundInput): void {
-        this.input.push(content);
+    addInput(content: CompoundInput, beforeLast: boolean = false): void {
+        if (beforeLast && this.input.length > 0) {
+            this.input.splice(this.input.length - 1, 0, content);
+        } else {
+            this.input.push(content);
+        }
     }
 
     addEnchantment(enchantment: IPromptEnchantment): void {

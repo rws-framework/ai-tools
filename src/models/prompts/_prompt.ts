@@ -120,8 +120,8 @@ class RWSPrompt implements IPromptInstance {
         return this.ioManager.readOutput();
     }
 
-    addInput(content: CompoundInput): RWSPrompt {
-        this.ioManager.addInput(content);
+    addInput(content: CompoundInput, beforeLast: boolean = false): RWSPrompt {
+        this.ioManager.addInput(content, beforeLast);
         return this;
     }
 
