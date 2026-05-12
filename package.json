@@ -1,7 +1,7 @@
 {
   "name": "@rws-framework/ai-tools",
   "private": false,
-  "version": "3.10.2",
+  "version": "3.10.3",
   "description": "",
   "main": "src/index.ts",
   "scripts": {},
@@ -21,7 +21,7 @@
   },
   "devDependencies": {
     "@types/xml2js": "^0.4.14",
-    "typescript": "^6.0.4"
+    "typescript": "6.0.3"
   },
   "jest": {
     "moduleFileExtensions": [
