@@ -21,6 +21,10 @@ export class InputOutputManager {
         }
     }
 
+    prependInput(content: CompoundInput): void {
+        this.input.unshift(content);
+    }
+
     addEnchantment(enchantment: IPromptEnchantment): void {
         this.enhancedInput.push(enchantment);
     }

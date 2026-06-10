@@ -125,6 +125,11 @@ class RWSPrompt implements IPromptInstance {
         return this;
     }
 
+    prependInput(content: CompoundInput): RWSPrompt {
+        this.ioManager.prependInput(content);
+        return this;
+    }
+
     addHistory(messages: IRWSHistoryMessage[], historyPrompt: string, callback?: (messages: IRWSHistoryMessage[], prompt: string) => void): void {
         this.ioManager.addHistory(messages, historyPrompt, callback);
     }
